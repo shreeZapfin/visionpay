@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permissions;
 use App\Enums\UserType;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -18,7 +19,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-       return true;
+        return true;
     }
 
     /**
@@ -53,7 +54,59 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return ($user->id === $model->id || in_array($user->user_type_id ,[UserType::Admin,UserType::Agent]));
+//        return ($user->id === $model->id || #Authorized user can edit himselfs permission
+//            in_array($user->user_type_id ,[UserType::Admin,UserType::Agent,UserType::Staff])); #Admin/Agent or Staff can update a user
+
+        if ($user->id === $model->id)
+            return true;
+
+        if ($user->is_admin)
+            return true;
+
+
+        $hasPermission = false;
+
+
+        if(request()->route()->uri == 'api/user/{user}/edit')
+            if ($user->hasPermissionTo(Permissions::VIEW_USER))
+                $hasPermission = true;
+
+
+
+        if (request()->route()->uri == 'api/user/{user}') {
+            if (request()->has('is_kyc_verified'))  //verification field update permission
+                if ($user->hasPermissionTo(Permissions::MANAGE_USER_VERIFICATION))
+                    $hasPermission = true;
+
+
+            //basic details update permission
+            if (
+                request()->has('first_name') ||
+                request()->has('last_name') ||
+                request()->has('address') ||
+                request()->has('date_of_birth') ||
+                request()->has('gender') ||
+                request()->has('business_name')
+            )
+                if ($user->hasPermissionTo(Permissions::EDIT_USER_BASIC_DETAILS))
+                    $hasPermission = true;
+
+        }
+
+        //Document upload permission
+        if (
+            request()->route()->uri == 'api/user/kyc-document/{user}' ||
+            request()->route()->uri == 'api/user/selfie-image/{user}' ||
+            request()->route()->uri == 'api/user/profile-pic/{user}' ||
+            request()->route()->uri == 'api/user/business/company-tin-image/{user}' ||
+            request()->route()->uri == 'api/user/business/company-reg-image/{user}'
+        ) {
+            if ($user->hasPermissionTo(Permissions::UPLOAD_USER_DOCUMENT))
+                $hasPermission = true;
+        }
+
+        return $hasPermission;
+
     }
 
     /**

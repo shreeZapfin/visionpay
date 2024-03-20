@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use App\Enums\WithdrawalStatus;
 use App\Exceptions\NotValidForBankWithdrawalException;
 use App\Helpers\ResponseFormatter;
 use App\Helpers\Utils;
 use App\Http\Requests\AcceptWithDrawRequest;
 use App\Http\Requests\AdminRequest;
+use App\Http\Requests\AdminWithdrawalRequest;
 use App\Http\Requests\BankWithdrawalRequest;
+use App\Http\Requests\ProcessBankWithdrawalRequest;
 use App\Http\Requests\WithdrawRequest;
 use App\Models\SystemSetting;
 use App\Models\User;
@@ -24,9 +27,14 @@ class WithdrawalController extends Controller
 
     function index(Request $request)
     {
-        $withdrawals = Withdrawal::byUser(Auth::user())
+        $user =  (Auth::user()->user_type_id == UserType::Staff) ? #If staff managing the request
+            User::where('user_type_id', UserType::Admin)->first() #Its the admin funds requests which need to be shown
+            : Auth::user(); #Else show the authenticated users fund requests
+
+        $withdrawals = Withdrawal::byUser($user)
             ->with('agent_user:users.id,first_name,last_name,pacpay_user_id,user_type_id', 'user:id,first_name,last_name,pacpay_user_id,user_type_id', 'user.biller')
-            ->filter($request->all());
+            ->filter($request->all())
+            ->orderBy('id','DESC');
 
 
         if ($request->request_origin == 'web')
@@ -76,7 +84,7 @@ class WithdrawalController extends Controller
         return ResponseFormatter::success($withdrawal, 'Withdrawal request succesful');
     }
 
-    function processBankRequest(AdminRequest $request, Withdrawal $withdrawal)
+    function processBankRequest(ProcessBankWithdrawalRequest $request, Withdrawal $withdrawal)
     {
         $this->validate($request, [
             'status' => 'required|in:BANK_WITHDRAWAL_PAID,BANK_WITHDRAWAL_FAILED',
@@ -93,11 +101,11 @@ class WithdrawalController extends Controller
         return ResponseFormatter::success($withdrawal->refresh(), 'Withdrawal updated succesfully');
     }
 
-    function adminWithdrawal(User $user, AdminRequest $request)
+    function adminWithdrawal(User $user, AdminWithdrawalRequest $request)
     {
-        $this->validate($request, ['amount' => 'required|numeric', 'transaction_pin' => 'required', 'remark' => 'nullable']);
+        $this->validate($request, ['amount' => 'required|numeric', 'transaction_pin' => 'required|digits:4', 'remark' => 'nullable']);
 
-        if (Utils::check_transaction_pin($request->pin)) {
+        if (Utils::check_transaction_pin($request->transaction_pin)) {
             $wt = (new WithdrawalService())->adminWithdrawal($user, $request->amount, $request->remark);
 
             return ResponseFormatter::success($wt, 'Admin withdrawal success');

@@ -6,6 +6,7 @@ use App\Helpers\FileHelper;
 use App\Helpers\ResponseFormatter;
 use App\Http\Requests\AdminRequest;
 use App\Http\Requests\AdvertisementStoreRequest;
+use App\Http\Requests\AdvertisementUpdateRequest;
 use App\Models\Advertisement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -92,7 +93,7 @@ class AdvertisementController extends Controller
      * @param  \App\Models\Advertisement $advertisement
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Advertisement $advertisement)
+    public function update(AdvertisementUpdateRequest $request, Advertisement $advertisement)
     {
         if ($request->advertisement_image) {
             $advertisementImage = (new FileHelper())->storeFileOnS3($request->file('advertisement_image'), 'advertisement_images');
@@ -111,7 +112,7 @@ class AdvertisementController extends Controller
      * @param  \App\Models\Advertisement $advertisement
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AdminRequest $request, Advertisement $advertisement)
+    public function destroy(AdvertisementUpdateRequest $request, Advertisement $advertisement)
     {
 
         $advertisement->delete();
@@ -120,7 +121,7 @@ class AdvertisementController extends Controller
 
     }
 
-    function updateStatus(Request $request, Advertisement $advertisement)
+    function updateStatus(AdvertisementUpdateRequest $request, Advertisement $advertisement)
     {
         $advertisement->status = $request->status;
         $advertisement->save();
@@ -129,7 +130,7 @@ class AdvertisementController extends Controller
     }
 
 
-    function changeOrder(Request $request)
+    function changeOrder(AdvertisementUpdateRequest $request)
     {
 
         $order = collect($request->all());

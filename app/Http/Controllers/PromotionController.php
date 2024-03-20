@@ -12,6 +12,7 @@ use App\Models\Promotion;
 use App\Models\User;
 use App\Models\UserVoucher;
 use App\Services\PushNotificationService;
+use App\Services\ReedeemVoucherService;
 use BeyondCode\Vouchers\Facades\Vouchers;
 use BeyondCode\Vouchers\Models\Voucher;
 use Carbon\Carbon;
@@ -164,9 +165,11 @@ class PromotionController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request,Promotion $promotion)
     {
-        //
+        $cb = (new ReedeemVoucherService())->getEligibleCashbackOnVoucher($promotion->voucher,$request->txn_amount);
+        $promotion->setAttribute('transaction_cashback_applicable',$cb);
+        return ResponseFormatter::success($promotion->load('voucher'), 'Voucher details');
     }
 
     /**

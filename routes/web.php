@@ -13,20 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 Route::get('/', function () {
-    \Artisan::call('config:cache');
-    \Artisan::call('view:clear');
-    \Artisan::call('route:clear');
-    dd("Cache is cleared");
+    return redirect('login');
 });
-
-Route::get('getMobile', [App\Http\Controllers\LoginController::class, 'getMobile']);
-Route::post('submitMobile', [\App\Http\Controllers\LoginController::class, 'submitMobile'])->name('submitMobile');
-Route::get('verifyOtp', [App\Http\Controllers\LoginController::class, 'verifyOtp']);
-Route::post('verifyUserOtp', [App\Http\Controllers\LoginController::class, 'verifyUserOtp']);
-
-Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 
 Route::get('/push-notificaiton', [\App\Http\Controllers\WebNotificationController::class, 'index'])->name('push-notificaiton');
@@ -46,56 +35,74 @@ Route::group(['middleware' => ['auth', 'web', 'admin_web']], function () {
     Route::get('/index', function () {
         return view('index');
     });
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    Route::group(['middleware' => ['permission:'.\App\Enums\Permissions::VIEW_USER]], function () {
+        Route::get('/users', [App\Http\Controllers\UserController::class, 'showCustomerPage']);
+        Route::get('/merchants', [App\Http\Controllers\UserController::class, 'showMerchantPage']);
+        Route::get('/agents', [App\Http\Controllers\UserController::class, 'showAgentPage']);
+        Route::get('/billerinfo/editBiller/{user}', [App\Http\Controllers\UserController::class, 'editBillers']);
+        Route::get('/billers', [App\Http\Controllers\UserController::class, 'showBillerPage']);
 
-    Route::get('/users', [App\Http\Controllers\UserController::class, 'showCustomerPage']);
-    Route::get('/getUser/{Id}', [App\Http\Controllers\UserController::class, 'getUser']);
+        //Verified Users
+        Route::get('/verifiedUser', [App\Http\Controllers\UserController::class, 'showVerifiedUserPage']);
+        Route::get('/verifiedMerchant', [App\Http\Controllers\UserController::class, 'showVerifiedMerchantPage']);
+        Route::get('/verifiedAgent', [App\Http\Controllers\UserController::class, 'showVerifiedAgentPage']);
+        Route::get('/verifiedBiller', [App\Http\Controllers\UserController::class, 'showVerifiedBillerPage']);
 
-    Route::get('/merchants', [App\Http\Controllers\UserController::class, 'showMerchantPage']);
-    Route::get('/agents', [App\Http\Controllers\UserController::class, 'showAgentPage']);
-    Route::get('/billerinfo/editBiller/{user}', [App\Http\Controllers\UserController::class, 'editBillers']);
-    Route::get('/billers', [App\Http\Controllers\UserController::class, 'showBillerPage']);
+        //UnVerified Users
+        Route::get('/unVerifiedUser', [App\Http\Controllers\UserController::class, 'showUnVerifiedUserPage']);
+        Route::get('/unVerifiedMerchants', [App\Http\Controllers\UserController::class, 'showUnVerifiedMerchantPage']);
+        Route::get('/unVerifiedAgents', [App\Http\Controllers\UserController::class, 'showUnVerifiedAgentPage']);
+        Route::get('/unVerifiedBillers', [App\Http\Controllers\UserController::class, 'showUnVerifiedBillerPage']);
+
+        //Incomplete Registration
+        Route::get('/incompleteRegisterUser', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterUserPage']);
+        Route::get('/incompleteRegisterMerchant', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterMerchantPage']);
+        Route::get('/incompleteRegisterAgent', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterAgentPage']);
+        Route::get('/incompleteRegisterBiller', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterBillerPage']);
+
+        //Merchant Sub Account
+        Route::get('/merchantSubAccount', [App\Http\Controllers\UserController::class, 'showMerchantSubAccountPage']);
+
+
+    });
+
 
     Route::get('user/logout', [App\Http\Controllers\LoginController::class, 'logoutWeb']);
 
     // Route::get('merchant/{user}/editMerchant', [App\Http\Controllers\UserController::class, 'editMerchant']);
-    //Verified Users
-    Route::get('/verifiedUser', [App\Http\Controllers\UserController::class, 'showVerifiedUserPage']);
-    Route::get('/verifiedMerchant', [App\Http\Controllers\UserController::class, 'showVerifiedMerchantPage']);
-    Route::get('/verifiedAgent', [App\Http\Controllers\UserController::class, 'showVerifiedAgentPage']);
-    Route::get('/verifiedBiller', [App\Http\Controllers\UserController::class, 'showVerifiedBillerPage']);
 
-    //UnVerified Users
-    Route::get('/unVerifiedUser', [App\Http\Controllers\UserController::class, 'showUnVerifiedUserPage']);
-    Route::get('/unVerifiedMerchants', [App\Http\Controllers\UserController::class, 'showUnVerifiedMerchantPage']);
-    Route::get('/unVerifiedAgents', [App\Http\Controllers\UserController::class, 'showUnVerifiedAgentPage']);
-    Route::get('/unVerifiedBillers', [App\Http\Controllers\UserController::class, 'showUnVerifiedBillerPage']);
-
-    //Incomplete Registration
-    Route::get('/incompleteRegisterUser', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterUserPage']);
-    Route::get('/incompleteRegisterMerchant', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterMerchantPage']);
-    Route::get('/incompleteRegisterAgent', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterAgentPage']);
-    Route::get('/incompleteRegisterBiller', [App\Http\Controllers\UserController::class, 'showIncompleteRegisterBillerPage']);
-
-    //Merchant Sub Account
-    Route::get('/merchantSubAccount', [App\Http\Controllers\UserController::class, 'showMerchantSubAccountPage']);
 
     //Add Admin Balance
     Route::get('/addAdminBalance', function () {
         return view('admin_add_balance');
     });
 
-    //Add Users
-    Route::get('/addUser', function () {
-        return view('users.add_new_user');
-    });
-    Route::get('/addMerchant', function () {
-        return view('merchants.add_new_merchant');
-    });
-    Route::get('/addAgent', function () {
-        return view('agents.add_new_agent');
-    });
-    Route::get('/addBiller', function () {
-        return view('Biller.add_new_biller');
+    Route::group(['middleware' => ['permission:'.\App\Enums\Permissions::CREATE_USER]], function () {
+        //Add Users
+        Route::get('/addUser', function () {
+            return view('users.add_new_user');
+        });
+        Route::get('/addAdminUser', function () {
+            return view('users.add_new_admin_user');
+        });
+        Route::get('/viewAdminUser', function () {
+            return view('users.admin_user');
+        });
+
+
+        Route::get('/viewUserActivity', function () {
+            return view('users.view_activity');
+        });
+        Route::get('/addMerchant', function () {
+            return view('merchants.add_new_merchant');
+        });
+        Route::get('/addAgent', function () {
+            return view('agents.add_new_agent');
+        });
+        Route::get('/addBiller', function () {
+            return view('Biller.add_new_biller');
+        });
     });
 
     //Admin Bank
@@ -105,7 +112,7 @@ Route::group(['middleware' => ['auth', 'web', 'admin_web']], function () {
     });
 
     //Fund Request
-    Route::get('/fund-request-list', [App\Http\Controllers\FundRequestController::class, 'showFundRequestPage']);
+    Route::get('/fund-request-list', [App\Http\Controllers\FundRequestController::class, 'showFundRequestPage'])->middleware('permission:'.\App\Enums\Permissions::MANAGE_USER_WALLET);
 
     //Admin Wallet History
     Route::get('/wallet-history-list', [App\Http\Controllers\WalletTransactionController::class, 'showWalletHistoryPage']);
@@ -116,12 +123,18 @@ Route::group(['middleware' => ['auth', 'web', 'admin_web']], function () {
         return view('Reports.admin_withdrawal');
     });
 
+    Route::get('/admin-master-history', function () {
+        return view('Reports.admin_master_wallet_history');
+    });
+
     //Add Advertisement
-    Route::get('/advertisement-list', [App\Http\Controllers\AdvertisementController::class, 'showAdvertisementPage']);
+    Route::get('/advertisement-list', [App\Http\Controllers\AdvertisementController::class, 'showAdvertisementPage'])->middleware('permission:'.\App\Enums\Permissions::MANAGE_ADVERTISEMENT);
 
     Route::get('/add-advertisement', function () {
         return view('Settings.add_advertisement');
     });
+
+  
 
     Route::get('/scheme-list', [App\Http\Controllers\TransferLimitSchemeController::class, 'showSchemesPage']);
 
@@ -133,7 +146,7 @@ Route::group(['middleware' => ['auth', 'web', 'admin_web']], function () {
     Route::get('/withdrawal-list', [App\Http\Controllers\WithdrawalController::class, 'showWithdrawalListPage']);
 
     //Bill Payment
-    Route::get('/biller-list', [App\Http\Controllers\BillerController::class, 'showBillerListPage']);
+    Route::get('/biller-list', [App\Http\Controllers\BillerController::class, 'showBillerListPage'])->middleware('permission:'.\App\Enums\Permissions::VIEW_USER);
     Route::get('/biller-category', [App\Http\Controllers\BillerController::class, 'showBillerCategory']);
     Route::get('/bill-payment-report', [App\Http\Controllers\BillPaymentsController::class, 'showBillerReportPage']);
     Route::get('/biller-withdrawal-funds', [App\Http\Controllers\WithdrawalController::class, 'showBillerWithdrawalFundsPage']);
@@ -148,7 +161,7 @@ Route::group(['middleware' => ['auth', 'web', 'admin_web']], function () {
 
     //Complaint
     Route::get('/complaint_type', [App\Http\Controllers\ComplaintTypeController::class, 'showComplaintTypePage']);
-    Route::get('/complaint_list', [App\Http\Controllers\ComplaintController::class, 'showComplaintListPage']);
+    Route::get('/complaint_list', [App\Http\Controllers\ComplaintController::class, 'showComplaintListPage'])->middleware('permission:'.\App\Enums\Permissions::MANAGE_COMPLAINT);
 
     //Notification
     Route::get('/notification', [App\Http\Controllers\WebNotificationController::class, 'showAdminBankPage']);
@@ -190,7 +203,7 @@ Route::group(['middleware' => ['auth', 'web', 'biller_web']], function () {
 });
 
 //User Dashboard
-Route::group(['middleware' => ['auth', 'web', 'customer_web']], function () {
+/* Route::group(['middleware' => ['auth', 'web', 'customer_web']], function () {
 
     Route::get('user/index', function () {
         return view('CustomerPanel.user_dashboard');
@@ -198,7 +211,7 @@ Route::group(['middleware' => ['auth', 'web', 'customer_web']], function () {
     Route::get('customer/index', function () {
         return view('CustomerPanel.customer_index');
     });
-});
+}); */
 
 Route::get('/forgot-password', function () {
     return view('forgot_password');

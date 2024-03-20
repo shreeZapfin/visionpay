@@ -103,22 +103,43 @@ class ReedeemVoucherService
     function ifUserAgainstValidUserType($voucherData, $receipeintUserId)
     {
         /*If voucher_for is MERCHANT_PAYMENT*/
-            /*Receipeint should be a merchant*/
+        /*Receipeint should be a merchant*/
 
         if ($voucherData->voucher_for == 'MERCHANT_PAYMENT') {
 
             $receipeintUser = User::where('id', $receipeintUserId)
-                ->select('id', 'master_account_user_id','user_type_id')->first();
+                ->select('id', 'master_account_user_id', 'user_type_id')->first();
 
-            if($receipeintUser->master_account()->exists()) /*Check with the master account user type to check voucher user type*/
+            if ($receipeintUser->master_account()->exists()) /*Check with the master account user type to check voucher user type*/
                 $receipeintUser = User::find($receipeintUser->master_account_user_id);
 
             if ($receipeintUser->user_type_id != UserType::Merchant) {
-                    return false;
+                return false;
             }
         }
 
         return true;
+
+    }
+
+    function getEligibleCashbackOnVoucher(Voucher $voucher, $amount)
+    {
+
+        $voucherData = json_decode($voucher->data);
+
+        if ($voucherData->min_txn_amount)
+            if ($amount < $voucherData->min_txn_amount)
+                return 0;
+
+        if ($voucherData->cashback_type == 'PERCENTAGE') {
+            $cashbackAmount = $amount * $voucherData->cashback_amount / 100;
+            if ($cashbackAmount > $voucherData->reward_upto_max_amount)
+                $cashbackAmount = $voucherData->reward_upto_max_amount;
+        } else {
+            $cashbackAmount = $voucherData->cashback_amount;
+        }
+
+        return $cashbackAmount;
 
     }
 

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\Permissions;
+use App\Traits\Maskable;
 use BeyondCode\Vouchers\Traits\CanRedeemVouchers;
 use EloquentFilter\Filterable;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property integer $id
@@ -50,7 +53,7 @@ class User extends \Illuminate\Foundation\Auth\User
 {
 
 
-    use HasFactory, HasApiTokens, Filterable, CanRedeemVouchers;
+    use HasFactory, HasApiTokens, Filterable, CanRedeemVouchers, HasRoles , Maskable;
     /**
      * The "type" of the auto-incrementing ID.
      *
@@ -61,13 +64,25 @@ class User extends \Illuminate\Foundation\Auth\User
     /**
      * @var array
      */
-    protected $fillable = ['city_id', 'user_type_id', 'wallet_id', 'username', 'mobile_no', 'email', 'password', 'first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'transaction_pin', 'selfie_img_url', 'created_at', 'updated_at', 'kyc_document_url', 'pacpay_user_id', 'is_kyc_verified', 'is_registration_completed', 'is_verified', 'qr_code_info', 'payment_link', 'account_blocked', 'profile_pic_img_url', 'user_permission_id','personal_tin_no'];
+    protected $fillable = ['city_id', 'user_type_id', 'wallet_id', 'username', 'mobile_no', 'email', 'password', 'first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'transaction_pin', 'selfie_img_url', 'created_at', 'updated_at', 'kyc_document_url', 'pacpay_user_id', 'is_kyc_verified', 'is_registration_completed', 'is_verified', 'qr_code_info', 'payment_link', 'account_blocked', 'profile_pic_img_url', 'user_permission_id', 'personal_tin_no'];
     protected $hidden = ['password', 'transaction_pin', 'is_admin', 'wallet_id'];
-    protected $appends = ['full_name', 'is_admin', 'user_type','is_sub_account'];
+    protected $appends = ['full_name', 'is_admin', 'user_type', 'is_sub_account'];
+    protected $columns = ['account_blocked','address','city_id','commission_scheme_id','created_at','date_of_birth','email','first_name','gender','has_sub_accounts','id','is_kyc_verified','is_registration_completed','is_verified','kyc_document_expiry_date','kyc_document_id','kyc_document_type','kyc_document_url','kyc_verified_at','kyc_verified_by','last_name','master_account_user_id','mobile_no','pacpay_user_id','password','payment_link','personal_tin_no','profile_pic_img_url','qr_code_info','selfie_img_url','source_of_income_id','transaction_pin','transfer_limit_scheme_id','updated_at','user_permission_id','user_type_id','username','wallet_id'];
+    protected $masked = [
+        'email',
+        'mobile_no',
+    ];
 
     protected $dateFormat = 'Y-m-d h:i:s';
 
     protected $casts = ['is_kyc_verified' => 'boolean'];
+
+    public function maskFields()
+    {
+        foreach ($this->masked as $field) {
+            $this->mask($field);
+        }
+    }
 
     public function setPacpayUserIdAttribute($userId)
     {
@@ -98,12 +113,11 @@ class User extends \Illuminate\Foundation\Auth\User
             \App\Enums\UserType::Biller => 'Biller',
             \App\Enums\UserType::AdminCommission => 'Admin Commission',
             \App\Enums\UserType::SubAccount => 'Sub account',
-            \App\Enums\UserType::AdminWithdrawal => 'Admin withdrawal'
+            \App\Enums\UserType::AdminWithdrawal => 'Admin withdrawal',
+            \App\Enums\UserType::Staff => 'Staff'
         ];
 
-        return $userTypes;
-        // return $userTypes[$this->user_type_id];
-
+        return $userTypes[$this->user_type_id];
     }
 
     public function getIsSubAccountAttribute()
@@ -284,11 +298,49 @@ class User extends \Illuminate\Foundation\Auth\User
         return $this->hasMany('App\Models\UserEvent', 'user_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\hasOne
+     */
+    public function sourceOfIncome()
+    {
+        return $this->hasOne('App\Models\SourceOfIncome', 'id', 'source_of_income_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function walletTransactions()
+    {
+        return $this->hasMany('App\Models\WalletTransaction');
+    }
+
+
+    /*This function can be used to exclude certain columns where eloquent is used*/
+    public function scopeExclude($query, $value = [])
+    {
+        return $query->select(array_diff($this->columns, (array) $value));
+    }
+
 
     function scopeVerifiedUsers($query)
     {
         return $query->where('is_kyc_verified', true);
     }
 
+
+    function createAgentProfile()
+    {
+        $agent = $this->agent()->firstOrCreate();
+        $agent->agentWallets()->firstOrCreate(['wallet_type' => 'FUNDS']);
+        $agent->agentWallets()->firstOrCreate(['wallet_type' => 'COMMISSION']);
+        $this->givePermissionTo([Permissions::MANAGE_USER_VERIFICATION, Permissions::UPLOAD_USER_DOCUMENT, Permissions::EDIT_USER_BASIC_DETAILS]);
+
+
+    }
+
+    function hasTokenAbilityTo($ability)
+    {
+        return array_key_exists($ability, array_flip($this->accessToken->abilities));
+    }
 
 }

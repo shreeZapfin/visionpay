@@ -14,7 +14,7 @@
     <!-- Custom fonts for this template-->
     <link href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css') }}"
         rel="stylesheet" media="screen" />
-    <link href="{{ asset('http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css') }}"
+    <link href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css') }}"
         rel="stylesheet">
     <link rel="stylesheet"
         href="{{ asset('http://fortawesome.github.io/Font-Awesome/3.2.1/assets/font-awesome/css/font-awesome.css') }}">
@@ -46,101 +46,111 @@
                         <!-- Nested Row within Card Body -->
                         <div class="row">
                             {{-- <div class="col-lg-6 d-none d-lg-block bg-password-image"></div> --}}
-                            <div class="col-lg-6" id="receive_otp">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-2">Forgot Your Password?</h1>
-                                        <br />
-                                    </div>
-                                    <form name='send_otp' id='send_otp'>
-                                        <div class="form-group">
-                                            <label>Receive OTP On?</label>
-                                            <div class="input-group">
-                                                <select name="auth_type" id="auth_type"
-                                                    class="select2 form-control custom-select">
-                                                    <option value="" selected="selected">Select Type</option>
-                                                    <option value="mobile">Mobile</option>
-                                                    <option value="email">Email</option>
-                                                </select>
-                                            </div>
+                            <div class="col-lg-6">
+                                <div id="receive_otp">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-2">Forgot Your Password?</h1>
+                                            <br />
                                         </div>
-                                        <div class="appendfields">
-                                            <div id="recive_otp_on_mobile" style="display: none;">
-                                                <div class="form-group">
-                                                    <label>Mobile Number</label>
-                                                    <div class="input-group">
-                                                        <input type="text" name="mobile_no" class="form-control"
-                                                            id="mobile_no" placeholder="Enter Mobile Number">
+                                        <form name='send_otp' id='send_otp'>
+                                            <div class="form-group">
+                                                <label>Receive OTP On?</label>
+                                                <div class="input-group">
+                                                    <select name="auth_type" id="auth_type"
+                                                        class="select2 form-control custom-select">
+                                                        <option value="" selected="selected">Select Type</option>
+                                                        {{-- <option value="mobile">Mobile</option> --}}
+                                                        <option value="email">Email</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="appendfields">
+                                                <div id="recive_otp_on_mobile" style="display: none;">
+                                                    <div class="form-group">
+                                                        <label>Mobile Number</label>
+                                                        <div class="input-group">
+                                                            <input type="text" name="mobile_no" class="form-control"
+                                                                id="mobile_no" placeholder="Enter Mobile Number">
 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="receive_otp_option" style="display: none;">
+                                                    <div class="form-group">
+                                                        <label>Email</label>
+                                                        <div class="input-group">
+                                                            <input type="email" name="email" class="form-control"
+                                                                id="email" aria-describedby="emailHelp"
+                                                                placeholder="Enter Email Address">
+
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="receive_otp_option" style="display: none;">
-                                                <div class="form-group">
-                                                    <label>Email</label>
-                                                    <div class="input-group">
-                                                        <input type="email" name="email" class="form-control"
-                                                            id="email" aria-describedby="emailHelp"
-                                                            placeholder="Enter Email Address">
+                                            <div
+                                                style="text-align: center;display: block;margin: 0 auto; padding-top: 30px;">
+                                                <button type="submit" class="btn btn-primary btn-rounded btn-fw"
+                                                    style="font-weight:500;">Reset Password</button>
 
-                                                    </div>
-                                                </div>
                                             </div>
+                                            <div class='response'></div>
+                                        </form>
+                                        <hr>
+                                        <div class="text-center">
+                                            <a class="small" href="{{ asset('login') }}">Already have an account?
+                                                Login!</a>
                                         </div>
-                                        <div
-                                            style="text-align: center;display: block;margin: 0 auto; padding-top: 30px;">
-                                            <button type="submit" class="btn btn-primary btn-rounded btn-fw"
-                                                style="font-weight:500;">Reset Password</button>
-
-                                        </div>
-                                        <div class='response'></div>
-                                    </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="{{ asset('login') }}">Already have an account?
-                                            Login!</a>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6" id="forget_pwd" style="display: none;">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-2">Forgot Your Password?</h1>
-                                        <br />
+                                <div id="forget_pwd" style="display: none;">
+                                    {{--  style="display: none;" --}}
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-2">Forgot Your Password?</h1>
+                                            <br />
+                                        </div>
+                                        <form name='forget_password' id='forget_password'>
+
                                     </div>
-                                    <form name='forget_password' id='forget_password'>
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">Create New Password</label>
-                                            <div class="input-group">
-                                                <input type="password" name="password" class="form-control"
-                                                    id="password" required>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">OTP</label>
+                                        <div class="input-group">
+                                            <input type="text" name="otp" class="form-control" id="otp"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Create New Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" class="form-control" id="password"
+                                                required>
 
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">
-                                                        <i class="far fa-eye" id="toggleNewPassword"></i>
-                                                    </span>
-                                                </div>
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-eye" id="toggleNewPassword"></i>
+                                                </span>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">Confirm New Password</label>
-                                            <div class="input-group">
-                                                <input type="password" name="password_confirmation"
-                                                    class="form-control" id="password_confirmation" required>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">
-                                                        <i class="far fa-eye" id="toggleConfirmPassword"></i>
-                                                    </span>
-                                                </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Confirm New Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password_confirmation" class="form-control"
+                                                id="password_confirmation" required>
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-eye" id="toggleConfirmPassword"></i>
+                                                </span>
                                             </div>
                                         </div>
-                                        <div
-                                            style="text-align: center;display: block;margin: 0 auto; padding-top: 30px;">
-                                            <button type="submit" class="btn btn-primary btn-rounded btn-fw"
-                                                style="font-weight:500;">Reset Password</button>
+                                    </div>
+                                    <div style="text-align: center;display: block;margin: 0 auto; padding-top: 30px;">
+                                        <button type="submit" class="btn btn-primary btn-rounded btn-fw"
+                                            style="font-weight:500;">Reset Password</button>
 
-                                        </div>
-                                        <div class='response'></div>
+                                    </div>
+                                    <div class='response'></div>
                                     </form>
                                     <hr>
                                     <div class="text-center">
@@ -157,10 +167,11 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </div>
+
+    </div>
 
     </div>
     <div id="loader"></div>
@@ -200,6 +211,7 @@
 
         var OTP = null;
         var MobNo = null;
+        var EmailID = null;
 
         //Forget Password
         $('#send_otp').on('submit', function(e) {
@@ -217,6 +229,7 @@
             // console.log("email: " + email);
 
             MobNo = $('#mobile_no').val();
+            EmailID = $('#email').val();
 
             var formFields;
             if ($('#auth_type').val() == 'email')
@@ -243,116 +256,120 @@
                             showCloseButton: true
                         }).then(okay => {
                             if (okay) {
-                                Swal.fire({
-                                    title: "Enter OTP send on registered Mobile No./ Email",
-                                    text: "",
-                                    input: 'text',
-                                    inputAttributes: {
-                                        maxlength: 6
-                                    },
-                                    showCancelButton: true
-                                }).then((result) => {
-                                    if (result.value) {
-                                        //  console.log("Result: " + result.value);
-                                        OTP = result.value;
-                                        var formField;
-                                        if ($('#auth_type').val() == 'email')
-                                            formField = 'email=' + $('#email').val() +
-                                            '&otp_for=USR_VER&auth_type=email&otp=' +
-                                            result.value;
-                                        else
-                                            formField = 'mobile_no=' + $('#mobile_no')
-                                            .val() +
-                                            '&otp_for=USR_VER&auth_type=mobile&otp=' +
-                                            result.value;
-                                        $.ajax({
-                                            url: '{{ url('api/otp/verify') }}',
-                                            type: 'post',
-                                            dataType: 'JSON',
-                                            data: formField,
-                                            success: function(data) {
-                                                //alert(JSON.stringify(meta.message));
-                                                //  console.log("ttttt");
-                                                if (data.error_code == 0) {
-                                                    //    console.log(data);
+                                $("#receive_otp")
+                                    .hide();
+                                $("#forget_pwd")
+                                    .show();
+                                /*   Swal.fire({
+                                      title: "Enter OTP send on registered Mobile No./ Email",
+                                      text: "",
+                                      input: 'text',
+                                      inputAttributes: {
+                                          maxlength: 6
+                                      },
+                                      showCancelButton: true
+                                  }).then((result) => {
+                                      if (result.value) {
+                                          //  console.log("Result: " + result.value);
+                                          OTP = result.value;
+                                          var formField;
+                                          if ($('#auth_type').val() == 'email')
+                                              formField = 'email=' + $('#email').val() +
+                                              '&otp_for=USR_VER&auth_type=email&otp=' +
+                                              result.value;
+                                          else
+                                              formField = 'mobile_no=' + $('#mobile_no')
+                                              .val() +
+                                              '&otp_for=USR_VER&auth_type=mobile&otp=' +
+                                              result.value;
+                                          $.ajax({
+                                              url: '{{ url('api/otp/verify') }}',
+                                              type: 'post',
+                                              dataType: 'JSON',
+                                              data: formField,
+                                              success: function(data) {
+                                                  //alert(JSON.stringify(meta.message));
+                                                  //  console.log("ttttt");
+                                                  if (data.error_code == 0) {
+                                                      //    console.log(data);
 
-                                                    Swal.fire({
-                                                        title: "" +
-                                                            data
-                                                            .meta
-                                                            .message,
-                                                        icon: 'success',
-                                                        showCloseButton: true
-                                                    }).then(okay => {
-                                                        if (okay) {
-                                                            $("#receive_otp")
-                                                                .hide();
-                                                            $("#forget_pwd")
-                                                                .show();
-                                                        }
-                                                    });
-                                                } else {
-                                                    swal(data.meta.message,
-                                                        "error");
-                                                }
+                                                      Swal.fire({
+                                                          title: "" +
+                                                              data
+                                                              .meta
+                                                              .message,
+                                                          icon: 'success',
+                                                          showCloseButton: true
+                                                      }).then(okay => {
+                                                          if (okay) {
+                                                              $("#receive_otp")
+                                                                  .hide();
+                                                              $("#forget_pwd")
+                                                                  .show();
+                                                          }
+                                                      });
+                                                  } else {
+                                                      swal(data.meta.message,
+                                                          "error");
+                                                  }
 
 
-                                            },
-                                            error: function(data) {
+                                              },
+                                              error: function(data) {
 
-                                                if (data.status === 422) {
-                                                    var errors = $
-                                                        .parseJSON(data
-                                                            .responseText);
-                                                    $.each(errors, function(
-                                                        key, value
-                                                    ) {
-                                                        // console.log(key+ " " +value);
-                                                        $('.response')
-                                                            .addClass(
-                                                                "alert alert-danger"
-                                                            );
+                                                  if (data.status === 422) {
+                                                      var errors = $
+                                                          .parseJSON(data
+                                                              .responseText);
+                                                      $.each(errors, function(
+                                                          key, value
+                                                      ) {
+                                                          // console.log(key+ " " +value);
+                                                          $('.response')
+                                                              .addClass(
+                                                                  "alert alert-danger"
+                                                              );
 
-                                                        if ($
-                                                            .isPlainObject(
-                                                                value
-                                                            )) {
-                                                            $.each(value,
-                                                                function(
-                                                                    key,
-                                                                    value
-                                                                ) {
-                                                                    // console
-                                                                    //     .log(
-                                                                    //         key +
-                                                                    //         " " +
-                                                                    //         value
-                                                                    //     );
-                                                                    $('.response')
-                                                                        .show()
-                                                                        .append(
-                                                                            value +
-                                                                            "<br/>"
-                                                                        );
+                                                          if ($
+                                                              .isPlainObject(
+                                                                  value
+                                                              )) {
+                                                              $.each(value,
+                                                                  function(
+                                                                      key,
+                                                                      value
+                                                                  ) {
+                                                                      // console
+                                                                      //     .log(
+                                                                      //         key +
+                                                                      //         " " +
+                                                                      //         value
+                                                                      //     );
+                                                                      $('.response')
+                                                                          .show()
+                                                                          .append(
+                                                                              value +
+                                                                              "<br/>"
+                                                                          );
 
-                                                                }
-                                                            );
-                                                        } else {
-                                                            $('.response')
-                                                                .show()
-                                                                .append(
-                                                                    value +
-                                                                    "<br/>"
-                                                                ); //this is my div with messages
-                                                        }
-                                                    });
-                                                }
+                                                                  }
+                                                              );
+                                                          } else {
+                                                              $('.response')
+                                                                  .show()
+                                                                  .append(
+                                                                      value +
+                                                                      "<br/>"
+                                                                  ); //this is my div with messages
+                                                          }
+                                                      });
+                                                  }
 
-                                            }
+                                              }
 
-                                        });
-                                    }
-                                });
+                                          });
+                                      }
+                                  }); */
                             }
                         });
                     } else {
@@ -443,13 +460,13 @@
 
             // console.log("formFields: " + formFields);
             // console.log("OTP:   " + OTP);
-            // console.log("MobNo:   " + MobNo);
+            console.log("EMAIL ID:   " + EmailID);
 
             $.ajax({
                 url: 'api/user/forgot-password',
                 type: 'post',
                 dataType: 'JSON',
-                data: formFields + '&otp=' + OTP + '&mobile_no=' + MobNo,
+                data: formFields + '&email_id=' + EmailID,
                 success: function(data) {
                     // console.log("ttttt");
                     if (data.error_code == 0) {

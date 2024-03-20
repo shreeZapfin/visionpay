@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\UserType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UserRegistrationRequest extends FormRequest
 {
@@ -14,6 +17,12 @@ class UserRegistrationRequest extends FormRequest
      */
     public function authorize()
     {
+        if (in_array($this->user_type_id, \App\Enums\UserType::StaffTypes())) {
+            if (Auth::user() == null)
+                return false;
+            if (!Auth::user()->is_admin)
+                return false;
+        }
         return true;
     }
 
@@ -26,13 +35,24 @@ class UserRegistrationRequest extends FormRequest
     {
 
         if ($this->method() == 'POST') {
-//            dd($this->request->all());
             return [
                 'mobile_no' => ['required', 'digits_between:7,10', 'unique:users,mobile_no'],
                 'email' => 'required|email|unique:users,email',
                 'username' => 'required|unique:users,username',
-                'password' => 'required|confirmed|min:8',
-                'user_type_id' => 'required|exists:user_types,id',
+                'password' => [
+                    'required',
+                    'string',
+                    Password::min(8)
+                        ->mixedCase()
+                        ->numbers()
+                        ->symbols()
+                        ->uncompromised(),
+                    'confirmed'
+                ],
+                'user_type_id' => ['required',Rule::exists('user_types','id')
+                    ->where(function ($query) {
+                    return $query->whereNotIn('id', \App\Enums\UserType::UniqueAdminTypes() + [\App\Enums\UserType::StaffTypes()]); #SINCE REGISTRATION IS OPEN DISALLOW REGISTRATION OF AGENT AND STAFF ACCOUNTS
+                }),],
                 'city_id' => 'nullable|exists:cities,id',
                 'first_name' => 'nullable|alpha',
                 'last_name' => 'nullable|alpha',
@@ -54,7 +74,8 @@ class UserRegistrationRequest extends FormRequest
                 'biller_img' => 'nullable|image',
                 'biller_img_base64' => 'nullable',
                 'biller_category_id' => 'required_if:user_type_id,5|exists:biller_categories,id',
-                'personal_tin_no' => 'nullable'
+                'personal_tin_no' => 'nullable',
+                'source_of_income_id' => 'nullable|exists:source_of_income,id'
             ];
         }
 
@@ -72,7 +93,7 @@ class UserRegistrationRequest extends FormRequest
                 'gender' => 'nullable|in:MALE,FEMALE,TRANSGENDER',
                 'address' => 'nullable',
                 'transaction_pin' => 'nullable|confirmed|digits:4',
-                'is_kyc_verified' => 'boolean',
+                'is_kyc_verified' => 'nullable|boolean',
                 /*user_type_id 3:Agent ,4:Merchant*/
                 'merchant_category_id' => 'nullable|exists:merchant_categories,id',
                 'business_type_id' => 'nullable|exists:business_types,id',
@@ -88,7 +109,9 @@ class UserRegistrationRequest extends FormRequest
                 'has_sub_accounts' => 'nullable|boolean',
                 'personal_tin_no' => 'nullable',
                 'remove_account_identifier' => 'nullable|boolean',
-                'remove_account_remark' => 'nullable'
+                'remove_account_remark' => 'nullable',
+                'source_of_income_id' => 'nullable|exists:source_of_income,id',
+                'wallet_limit' => 'nullable|numeric'
             ];
         }
     }

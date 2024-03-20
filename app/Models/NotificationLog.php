@@ -28,7 +28,7 @@ class NotificationLog extends Model
     /**
      * @var array
      */
-    protected $fillable = ['user_id', 'created_at', 'updated_at', 'title', 'body'];
+    protected $fillable = ['user_id', 'created_at', 'updated_at', 'title', 'body', 'event', 'entity_event', 'entity_unique_id'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -37,6 +37,15 @@ class NotificationLog extends Model
     {
         return $this->belongsTo('App\Models\User');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function walletTransaction()
+    {
+        return $this->belongsTo('App\Models\WalletTransaction', 'entity_unique_id', 'transaction_id');
+    }
+
 
     function scopeByUser($query, $userSession)
     {

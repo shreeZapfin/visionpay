@@ -1,54 +1,102 @@
-@extends('layouts.master')
-@section('styles')
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Verified User</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Verified User</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+<!DOCTYPE html>
+<html lang="en">
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
+<head>
 
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="tab-content mb-5">
-                                <div class="tab-pane active" id="tab-11">
-                                    <div class="card">
-                                        <div class="e-table px-5 pb-5 pd-12">
-                                            <div class="table-responsive table-lg">
-                                                <table class="table border-top table-bordered mb-0 text-nowrap" id="dataTable" style="width:100%;">
-                                                    <thead class="border-top">
-                                                        <tr>
-                                                            <th class="border-bottom-0">Name</th>
-                                                            <th class="border-bottom-0">Email</th>
-                                                            <th class="border-bottom-0">Username</th>
-                                                            <th class="border-bottom-0 ">Mobile No</th>
-                                                            <th class="border-bottom-0">Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody></tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        {{-- @include('datatables) --}}
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Verified User</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered dataTable" id="dataTable" width="100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">NAME</th>
+                                            <th class="text-center">EMAIL</th>
+                                            <th class="text-center">USERNAME</th>
+                                            <th class="text-center">MOBILE NO</th>
+                                            <th class="text-center">ACTION</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <!-- ROW CLOSED -->
                     </div>
-                    <!-- CONTAINER CLOSED -->
-                    
-@endsection
-@section('scripts')
-<script type="text/javascript">
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
+
+
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+
+    <script type="text/javascript">
         $(document).ready(function() {
             $(".navbar-nav li").removeClass("active"); //this will remove the active class from
             //previously active menu item
@@ -78,8 +126,9 @@
                 columnDefs: [{
                     targets: 4,
                     render: function(data, type, row, meta) {
-                        return '<td class="text-center"><a class="" title="Edit User" href="{{ url('api/user') }}/' +
-                            row.id + '/edit"><i class="bi bi-pencil-square"></i></a></td>';
+                        return '<td class="text-center"><a title="Edit" href="{{ url('api/user') }}/' +
+                            row.id +
+                            '/edit" style="color: rgb(30, 50, 250);"><i class="fas fa-fw fa-user"></i></a></td>';
                     }
 
                 }],
@@ -100,4 +149,6 @@
             });
         });
     </script>
-@endsection
+</body>
+
+</html>

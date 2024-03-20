@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permissions;
 use App\Models\Complaint;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -65,7 +66,7 @@ class ComplaintPolicy
      */
     public function addMessage(User $user, Complaint $complaint)
     {
-        if ($complaint->user_id == $user->id || $user->is_admin)
+        if ($complaint->user_id == $user->id || $user->is_admin || $user->hasPermissionTo(Permissions::MANAGE_COMPLAINT))
             return true;
 
         return false;
@@ -73,7 +74,7 @@ class ComplaintPolicy
 
     public function viewMessage(User $user, Complaint $complaint)
     {
-        if ($complaint->user_id == $user->id || $user->is_admin)
+        if ($complaint->user_id == $user->id || $user->is_admin || $user->hasPermissionTo(Permissions::MANAGE_COMPLAINT))
             return true;
         return false;
     }

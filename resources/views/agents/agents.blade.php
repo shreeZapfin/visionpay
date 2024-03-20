@@ -1,157 +1,216 @@
-@extends('layouts.master')
-@section('styles')
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Agents Information</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Agents Information</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+<!DOCTYPE html>
+<html lang="en">
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="col-xl-12">
-                                <div class="card p-0">
-                                    <div class="card-body p-4">
-                                        <div class="row align-items-center">
-                                        <form name='filter_search' id='filter_search' style="margin-top: 20px;">
-                                                <div class="input-group">
-                                                    <div class="form-group col-sm">
-                                                        <label>Gender</label>
-                                                        <select name="gender" id="gender" class="select2 form-control custom-select">
-                                                            <option value="" selected="selected">Select Gender</option>
-                                                            <option value="MALE">Male</option>
-                                                            <option value="FEMALE">Female</option>
-                                                        </select>
-                                                    </div> &nbsp;&nbsp;
-                                                    <div class="form-group col-sm">
-                                                    <label>City</label>
-                                                    <input type="text" name="city" id="city" class="form-control" aria-describedby="button-addon2"
-                                                        placeholder="Enter City" />
-                                                    </div>
-                                                    <div class="input-group col-sm justify-content-end">
-                                                    <button type="button" name="filter" id="filter" class="btn border btn-info"
-                                                        style="text-align: center; margin-top:30px; height : 35px; width: 100px;border-radius:0.3rem; margin-right: 9px;">
-                                                        Filter</button>
-                                                    <!-- &nbsp;&nbsp; -->
-                                                    <a type="button" name="export" id="export" class="btn btn-success btn-block float-end"
-                                                        href="{{ url('api/user/search?user_type_id=2&download_csv=1') }}"
-                                                        style="text-align: center; margin-top:30px; height : 35px; width: 100px; border-radius:0.3rem; margin-right: 9px;
-                                                        background:	#006400; color: rgb(255,255,255);">
-                                                        Export All</a>
-                                                    <!-- &nbsp;&nbsp; -->
-                                                    <a type="button" class="btn btn-secondary btn-block float-end"
-                                                        href="{{asset('addUser')}}"
-                                                        style="text-align: center; margin-top:30px; height : 35px; width: 114px; border-radius:0.3rem;
-                                                        background:	#006400; color: rgb(255,255,255);">
-                                                        Add Agent</a>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            <div class="e-table px-5 pb-5">
-                                                    <div class="table-responsive table-lg">
-                                                        <table class="table border-top table-bordered mb-0 text-nowrap" id="dataTable" style="width:100%;">
-                                                            <thead class="border-top">
-                                                                <tr>
-                                                                    <th class="border-bottom-0">Date</th>
-                                                                    <th class="border-bottom-0">Name</th>
-                                                                    <th class="border-bottom-0">Email</th>
-                                                                    <th class="border-bottom-0">Username</th>
-                                                                    <th class="border-bottom-0 ">Mobile No</th>
-                                                                    <th class="border-bottom-0">Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody></tbody>
-                                                        </table>
-                                                    </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- COL-END -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Agents Information</h5>
+                        </div>
+
+                        <form name='filter_search' id='filter_search' style="margin-top: 20px;">
+                            <div class="input-group input-daterange">
+                                <div class="form-group col-sm">
+                                    <label>Gender</label>
+                                    <select name="gender" id="gender" class="select2 form-control custom-select">
+                                        <option value="" selected="selected">Select Gender</option>
+                                        <option value="MALE">Male</option>
+                                        <option value="FEMALE">Female</option>
+                                    </select>
+                                </div> &nbsp;&nbsp;
+                                <div class="form-group col-sm">
+                                    <label>City</label>
+                                    <input type="text" name="city" id="city" class="form-control"
+                                        placeholder="Enter City" />
+                                </div>
+                                <div class="input-group col-sm">
+                                    &nbsp;&nbsp;
+                                    <button type="button" name="filter" id="filter" class="btn btn-info btn-sm"
+                                        style="text-align: center; margin-top:30px; height : 40px; width: 80px;">Filter</button>
+                                    &nbsp;&nbsp;
+                                    <a type="button" name="export" id="export" class="btn btn-block"
+                                        href="{{ url('api/user/search?user_type_id=3&download_csv=1') }}"
+                                        style="text-align: center; margin-top:30px; height : 40px; width: 100px; background:	#006400; color: rgb(255,255,255);">Export
+                                        ALL</a>
                                 </div>
                             </div>
-                        </div>
-                        <!-- ROW CLOSED -->
-                    </div>
-                    <!-- CONTAINER CLOSED -->
-                    
-@endsection
+                        </form>
 
- <!-- Add Funds Model-->
- <div class="modal fade" id="add_funds_form" tabindex="-1" aria-labelledby="add-userLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">DATE</th>
+                                            <th class="text-center">NAME</th>
+                                            <th class="text-center">EMAIL</th>
+                                            <th class="text-center">USERNAME</th>
+                                            <th class="text-center">MOBILE NO</th>
+                                            <th class="text-center">ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+            <div id="loader"></div>
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
+
+    <!-- Add Funds Model-->
+    <div class="modal fade" id="add_funds_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title" id="add-userLabel">Add Funds</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <h4 class="modal-title" id="exampleModalLabel">Add Funds</h4>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
                 <div class="modal-body">
                     <form name='addFunds' id='addFunds'>
-                        @csrf
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
-                                    <label class="form-label">Amount</label>
-                                    <input type="text" name="amount" class="form-control" id="amount" required>
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
+                                    <label>Amount</label>
+                                    <div class="input-group">
+                                        <input type="text" name="amount" class="form-control" id="amount"
+                                            required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
-                                    <label class="form-label">Transaction Pin</label>
-                                    <!-- <input type="text" name="transaction_pin" class="form-control"
-                                            id="transaction_pin" required> -->
-                                    <input type="text" name="transaction_pin" 
-                                    id="transaction_pin"
-                                    autocomplete="one-time-code" required inputmode="numeric" maxlength="4">
+                                <div class="form-group">
+                                    <label>Transaction Pin</label>
+                                    <div class="input-group">
+                                        <input type="text" name="transaction_pin" class="form-control"
+                                            id="transaction_pin" required>
+
+                                    </div>
                                 </div>
-                                <input type="text" name="pin" id="pin" hidden/>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Description</label>
-                                    <textarea type="text" name="description" class="form-control" id="description"
-                                            required></textarea>
+                                    <div class="input-group">
+                                        <input type="text" name="description" class="form-control"
+                                            id="description" required>
+
+                                    </div>
                                 </div>
-                                <div style="text-align:center">
-                                    <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
-                                        data-user-id="" style="font-weight:500;">Add</button>
-                                    <button type="button" class="btn btn-light cancel_btn" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
-                                </div>
+
+
+                            </div>
+
+                            <br><br>
+
+
+
                         </div>
+                        <div style="text-align:center">
+                            <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
+                                data-user-id="" style="font-weight:500;">Add</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+
                     </form>
-                     <div id='response'></div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <div id='response'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="{{ asset('login') }}">Logout</a>
                 </div>
             </div>
         </div>
     </div>
 
 
-@section('scripts')
 
-<script type="text/javascript">
-        //Add asterisk in TIN input
-        transaction_pin.addEventListener("keyup", function changeChar() {
-            const asterisks = "****";
-            document.getElementById("pin").value = transaction_pin.value;
-            if(transaction_pin.value.length == 4){
-                if (transaction_pin.value.length <= asterisks.length) {
-                    let newNumber = asterisks.substring(0, transaction_pin.value.length);
-                    transaction_pin.value = newNumber;
-                }
-            }
-            
-        });
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
 
-    $(document).ready(function() {
-             //Filter Button
-             $('#cancel_btn').click(function() {
-                $('form :input').val('');   //CLEAR FORM INPUT
-            });
-            
+    {{-- Date --}}
+    <script src="{{ asset('vendor/moment/moment.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
             $(".navbar-nav li").removeClass("active"); //this will remove the active class from  
             $('#admin').addClass('active');
             var spinner = $('#loader');
@@ -175,13 +234,21 @@
                         }
                     },
                     columnDefs: [{
-                        targets: 5,
-                        render: function(data, type, row, meta) {
-                            return '<td class="text-center"><a title="Edit" href="{{ asset('api/user') }}/' +
-                                row.id +
-                                '/edit" ><i class="bi bi-pencil-square"></i></a>&nbsp;&nbsp;<a data-bs-toggle="modal" data-bs-target="#add_funds_form" class="add_funds_entry btn btn-sm btn-icon "  style="color:#db555d;font-size: 16px;" data-userid="' + row.id + '"><i class="bi bi-cash"></i></a>';
+                            targets: 5,
+                            render: function(data, type, row, meta) {
+                                return '<td class="text-center"><a title="Edit" href="{{ asset('api/user') }}/' +
+                                    row.id +
+                                    '/edit" style="color: rgb(30, 50, 250);"><i class="fas fa-fw fa-user"></i></a>&nbsp;&nbsp;<button title="Add Funds" data-userid="' +
+                                    row.id +
+                                    '" class="add_funds_entry" style="color: rgb(0,128,0); border: none; background: none; width="100px";"><i class="fa fa-money fa-lg"></i></button></td>';
+                            }
+
+                        },
+                        {
+                            "orderable": false,
+                            "targets": '_all'
                         }
-                    }],
+                    ],
                     "columns": [{
                             data: 'created_at',
                             className: "created_at",
@@ -229,6 +296,8 @@
             $('#addFunds').on('submit', function(e) {
                 e.preventDefault();
                 spinner.show();
+
+
                 var formFields = $('#addFunds').serialize();
                 var send_to = $('#submit_button').data('user-id');
                 console.log("Bank Id: " + send_to);
@@ -266,17 +335,7 @@
 
                     },
                     error: function(data) {
-                        if (data.status == 400) {
-                            $('#add_funds_form').modal('hide');
-                            $('#dataTable').DataTable().ajax.reload();
-                            spinner.hide();
-                            Swal.fire({
-                                title: "" + data.responseJSON.meta
-                                    .message,
-                                icon: 'error',
-                                showCloseButton: true
-                            })
-                        } else
+
                         if (data.status === 422) {
                             var errors = $.parseJSON(data.responseText);
                             $.each(errors, function(key, value) {
@@ -286,7 +345,8 @@
 
                                 if ($.isPlainObject(value)) {
                                     $.each(value, function(key, value) {
-                                        //console.log(key + " " +value);
+                                        console.log(key + " " +
+                                            value);
                                         $('#response').show()
                                             .append(value +
                                                 "<br/>");
@@ -294,8 +354,8 @@
                                     });
                                 } else {
                                     $('#response').show().append(value +
-                                        "<br/>"); //this is my div with messages
-
+                                        "<br/>"
+                                    ); //this is my div with messages
                                     spinner.hide();
                                 }
                             });
@@ -310,4 +370,6 @@
 
         });
     </script>
-@endsection
+</body>
+
+</html>

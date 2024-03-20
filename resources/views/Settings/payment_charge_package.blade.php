@@ -1,134 +1,196 @@
-@extends('layouts.master')
-@section('styles')
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Payment Charge Package</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Payment Charge Package</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+<!DOCTYPE html>
+<html lang="en">
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="col-xl-12">
-                                <div class="card p-0">
-                                    <div class="row align-items-center">
-                                            <form name='filter_search' id='filter_search' style="margin-top: 20px;">
-                                                <div class="input-group">
-                                                    <div class="form-group col-sm">
-                                                        <label>Package Type</label>
-                                                        <select name="package_type" id="package_type"
-                                                            class="select2 form-control custom-select">
-                                                            <option value="" selected="selected">Select Package Type</option>
-                                                            <option value="MERCHANT_PAYMENT">Merchant Payment</option>
-                                                            <option value="P2P_PAYMENT">P2P Payment</option>
-                                                            <option value="BILL_PAYMENT">Bill Payment</option>
-                                                        </select>
-                                                    </div> &nbsp;&nbsp;
-                                                    <button type="button" name="filter" id="filter" class="btn border"
-                                                        style="text-align: center; margin-top:30px; height : 35px; width: 80px;border-top-right-radius: 0.3rem;border-bottom-right-radius: 0.3rem;     margin-right: 9px;">
-                                                        <i class="bi bi-search text-muted"></i></button>
-                                                    <div class="input-group col-sm justify-content-end pb-3">
-                                                        <button type="button" class="btn-fill btn btn-secondary" id='submit_button'
-                                                        style="text-align: center; margin-top:30px; height : 35px;border-top-left-radius: 0.3rem; border-bottom-left-radius: 0.3rem;border-top-right-radius: 0.3rem;border-bottom-right-radius: 0.3rem;     margin-right: 9px;">Create Package</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        <div class="card-body p-4">
-                                            <div class="row align-items-center justify-content-end">
-                                                <div class="e-table px-5 pb-5 pd-12">
-                                                    <div class="table-responsive table-lg">
-                                                        <table class="table border-top table-bordered mb-0 text-nowrap" id="dataTable" style="width:100%;">
-                                                            <thead class="border-top">
-                                                                <tr>
-                                                                    <th class="border-bottom-0 ">Date</th>
-                                                                    <th class="border-bottom-0 ">Package Name</th>
-                                                                    <th class="border-bottom-0 ">Package Type</th>
-                                                                    <th class="border-bottom-0 ">Max Charge</th>
-                                                                    <th class="border-bottom-0 ">Min Charge</th>
-                                                                    <th class="border-bottom-0 ">Percentage Charge</th>
-                                                                    <th class="border-bottom-0">Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody></tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Payment Charge Package</h5>
+                            <button type="submit" class="btn-fill btn" id='submit_button'
+                                style="float:right; margin-top: -20px;">Create Package</button>
+                        </div>
+                        <form name='filter_search' id='filter_search' style="margin-top: 20px;">
+                            <div class="col-12 col-sm-6 col-md-6 input-group input-daterange">
+                                <div class="form-group">
+                                    <label>Package Type</label>
+                                    <select name="package_type" id="package_type"
+                                        class="select2 form-control custom-select">
+                                        <option value="" selected="selected">Select Package Type</option>
+                                        <option value="MERCHANT_PAYMENT">Merchant Payment</option>
+                                        <option value="P2P_PAYMENT">P2P Payment</option>
+                                        <option value="BILL_PAYMENT">Bill Payment</option>
+                                    </select>
+                                </div>
+                                &nbsp;&nbsp;
+                                <div class="form-group">
+                                    <button type="button" name="filter" id="filter" class="btn btn-info btn-sm"
+                                        style="text-align: center; height : 40px; width: 80px;">Filter</button>
+                                </div>
+                                {{-- &nbsp;&nbsp; --}}
+
+                            </div>
+                        </form>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Package Name</th>
+                                            <th class="text-center">Package Type</th>
+                                            <th class="text-center">Max Charge</th>
+                                            <th class="text-center">Min Charge</th>
+                                            <th class="text-center">Percentage Charge</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+            <div id="loader"></div>
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
+
+    <!-- Create Payment Charge Package -->
+    <div class="modal fade" id="create_package_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">Create Payment Charge Package</h4>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
+                </div>
+                <div class="modal-body">
+                    <form name='createPackage' id='createPackage'>
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
+                                    <label> Package Name</label>
+                                    <div class="input-group">
+                                        <input type="text" name="package_name" class="form-control" id="package_name"
+                                            required>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Package Type</label>
+                                    <select name="package_type" id="package_type"
+                                        class="select2 form-control custom-select">
+                                        <option value="MERCHANT_PAYMENT" selected="selected">Merchant Payment</option>
+                                        <option value="P2P_PAYMENT">P2P Payment</option>
+                                        <option value="BILL_PAYMENT">Bill Payment</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <h6><b>Payment Charges</b></h6>
+                                    <div class="form-group">
+                                        <label>Max Charge</label>
+                                        <div class="input-group">
+                                            <input type="text" name="payment_charges[max_charge]"
+                                                class="form-control" id="max_charge" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Min Charge</label>
+                                        <div class="input-group">
+                                            <input type="text" name="payment_charges[min_charge]"
+                                                class="form-control" id="min_charge" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Percentage Charge</label>
+                                        <div class="input-group">
+                                            <input type="text" name="payment_charges[percentage_charge]"
+                                                class="form-control" id="percentage_charge" required>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
+                            <br><br>
                         </div>
-                        <!-- ROW CLOSED -->
-                    </div>
-                    <!-- CONTAINER CLOSED -->
-                    
-                        <!-- Create Payment Charge Package -->
-        <div class="modal fade" id="create_package_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="exampleModalLabel">Create Payment Charge Package</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body px-4">
-                        <form name='createPackage' id='createPackage'>
-                            <div class="row gy-3">
-                                    <div class="col-xl-12">
-                                        <label> Package Name</label>
-                                            <input type="text" name="package_name" class="form-control" id="package_name"
-                                                required>
-                                    </div>
-                                    <div class="col-xl-12">
-                                        <label>Package Type</label>
-                                        <select name="package_type" id="package_type"
-                                            class="select2 form-control custom-select">
-                                            <option value="MERCHANT_PAYMENT" selected="selected">Merchant Payment</option>
-                                            <option value="P2P_PAYMENT">P2P Payment</option>
-                                            <option value="BILL_PAYMENT">Bill Payment</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <h6><b>Payment Charges</b></h6>
-                                        <div class="col-xl-12">
-                                            <label>Max Charge</label>
-                                                <input type="text" name="payment_charges[max_charge]"
-                                                    class="form-control" id="max_charge" required>
-                                        </div>
-                                        <div class="col-xl-12">
-                                            <label>Min Charge</label>
-                                                <input type="text" name="payment_charges[min_charge]"
-                                                    class="form-control" id="min_charge" required>
-                                        </div>
-                                        <div class="col-xl-12">
-                                            <label>Percentage Charge</label>
-                                                <input type="text" name="payment_charges[percentage_charge]"
-                                                    class="form-control" id="percentage_charge" required>
-                                        </div>
-                                    </div>
-                            </div>
-                            <div id='response'></div>
-                            <div class="text-center px-4 py-4">
-                                <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
-                                    data-user-id="" style="font-weight:500;">Add</button>
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div id='response'></div>
+                        <div style="text-align:center">
+                            <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
+                                data-user-id="" style="font-weight:500;">Add</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
+    </div>
 
     <!-- Update Promotion Modal-->
     <div class="modal fade" id="update_payment_charge_package" tabindex="-1" role="dialog"
@@ -137,42 +199,63 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Payment Charge Package</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='updatePaymentChargePackage' id='updatePaymentChargePackage'>
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label> Package Name</label>
+                                    <div class="input-group">
                                         <input type="text" name="package_name" class="form-control"
                                             id="packageName" required>
+
+                                    </div>
                                 </div>
                                 <div>
                                     <h6><b>Payment Charges</b></h6>
-                                    <div class="col-xl-12">
+                                    <div class="form-group">
                                         <label>Max Charge</label>
+                                        <div class="input-group">
                                             <input type="text" name="payment_charges[max_charge]"
                                                 class="form-control" id="maxCharge" required>
+                                        </div>
                                     </div>
-                                    <div class="col-xl-12">
+                                    <div class="form-group">
                                         <label>Min Charge</label>
+                                        <div class="input-group">
                                             <input type="text" name="payment_charges[min_charge]"
                                                 class="form-control" id="minCharge" required>
+                                        </div>
                                     </div>
-                                    <div class="col-xl-12">
+                                    <div class="form-group">
                                         <label>Percentage Charge</label>
+                                        <div class="input-group">
                                             <input type="text" name="payment_charges[percentage_charge]"
                                                 class="form-control" id="percentageCharge" required>
+                                        </div>
                                     </div>
                                 </div>
+
+                            </div>
+
+                            <br><br>
+
                         </div>
-                        <div id="response" class="text-center px-4 py-4">
+                        <div id="response" style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                                 data-package-id="" style="font-weight:500;">Update</button>
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
@@ -185,31 +268,43 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Payment Charge Package</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='updateDefaultPackageType' id='updateDefaultPackageType'>
-                        <div class="row py-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     Set <input type="text" name="package_type" class="form-control"
                                         id="packageType" readonly> as default?
                                 </div>
+
+                            </div>
+
+                            <br><br>
+
                         </div>
-                        <div id="response" class="text-center px-4 py-4">
+                        <div id="response" style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                                 data-package-id="" style="font-weight:500;">Set</button>
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
     </div>
 
-@endsection
-@section('scripts')
-<script type="text/javascript">
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+
+    <script type="text/javascript">
         $(document).ready(function() {
             $(".navbar-nav li").removeClass("active"); //this will remove the active class from  
             //previously active menu item 
@@ -243,18 +338,19 @@
                             // console.log(data + " " + type + " " + row + " " + meta);
                             if (data == 1) {
                                 // console.log("inside if statement");
-                                return '<td class="text-center"><div class="d-flex"><div title="Default Package"><i class="bi bi-check" style="color: #db555d;font-size: 20px;" aria-hidden="true"></i></div><button data-packageid= "' +
-                                    row.id +
-                                    '"  class="update_promotion btn-fill-approve btn btn-primary">Update</button></div></td>';
+                                return '<td class="text-center"><div title="Default Package" style="color: rgb(0,128,0); border: none; background: none; text-align: center;  width="100px";"><i class="fa fa-check" aria-hidden="true"></i></div> <button data-packageid= "' +
+                                    row
+                                    .id +
+                                    '"  class="update_promotion btn-fill-approve btn" style="width: 80px;" >Update</button> </td>';
 
                             } else {
                                 return '<td class="text-center"><button data-packageid= "' +
                                     row
                                     .id +
-                                    '"  class="set_default_package btn-package-type btn btn-warning" >Set as Default</button>&nbsp;&nbsp;<button data-packageid= "' +
+                                    '"  class="set_default_package btn-package-type btn" style="background-color: #DDA0DD; color: black; width: 80px;" >Set as Default</button>&nbsp;&nbsp;<button data-packageid= "' +
                                     row
                                     .id +
-                                    '"  class="update_promotion btn-fill-approve btn btn-primary" >Update</button> </td>';
+                                    '"  class="update_promotion btn-fill-approve btn" style="width: 80px;" >Update</button> </td>';
                             }
 
                         }
@@ -552,4 +648,6 @@
 
         });
     </script>
-@endsection
+</body>
+
+</html>

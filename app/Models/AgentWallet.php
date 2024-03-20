@@ -21,7 +21,7 @@ class AgentWallet extends Model
     /**
      * @var array
      */
-    protected $fillable = ['agent_id', 'created_at', 'updated_at', 'wallet_type', 'balance','blocked_balance'];
+    protected $fillable = ['agent_id', 'created_at', 'updated_at', 'wallet_type', 'balance','blocked_balance','wallet_limit'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

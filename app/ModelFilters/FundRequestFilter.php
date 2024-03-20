@@ -72,4 +72,11 @@ class FundRequestFilter extends ModelFilter
 
     }
 
+    function fund_request_id($id)
+    {
+        return $this->where('fund_request_id',$id);
+
+    }
+
+
 }

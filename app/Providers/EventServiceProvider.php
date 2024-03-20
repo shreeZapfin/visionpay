@@ -7,6 +7,7 @@ use App\Events\ReceivedFundRequestEvent;
 use App\Events\SentFundRequestAcceptedEvent;
 use App\Events\SentFundRequestRejectedEvent;
 use App\Events\UserEventCreated;
+use App\Events\WalletLimitBreachedEvent;
 use App\Events\WithdrawalUpdatedEvent;
 use App\Listeners\SendAcceptedFundRequestNotification;
 use App\Listeners\SendComplaintMessageCreatedPushNotification;
@@ -14,6 +15,8 @@ use App\Listeners\SendReceivedFundRequestNotification;
 use App\Listeners\SendRejectedFundRequestNotification;
 use App\Listeners\UserEventCreatedNotificationListener;
 use App\Listeners\VoucherRedeemedListener;
+use App\Listeners\WalletLimitBreachedEventLoggerListener;
+use App\Listeners\WalletLimitBreachedNotificationListener;
 use App\Listeners\WithdrawalUpdatedPushNotification;
 use App\Models\Deposit;
 use App\Models\User;
@@ -60,6 +63,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserEventCreated::class => [
             UserEventCreatedNotificationListener::class
+        ],
+        WalletLimitBreachedEvent::class => [
+//            WalletLimitBreachedNotificationListener::class,
+            WalletLimitBreachedEventLoggerListener::class
         ]
     ];
 

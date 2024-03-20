@@ -6,6 +6,7 @@ use App\Enums\NotificationEntities;
 use App\Enums\UserType;
 use App\Helpers\ResponseFormatter;
 use App\Http\Requests\AdminRequest;
+use App\Http\Requests\CreateAlertRequest;
 use App\Models\NotificationLog;
 use App\Models\User;
 use App\Services\PushNotificationService;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AlertsController extends Controller
 {
-    function sendAlert(AdminRequest $request)
+    function sendAlert(CreateAlertRequest $request)
     {
         $this->validate($request, [
             'user_type_id' => 'nullable|required_without:user_id|in:2,3,4,0',
@@ -44,7 +45,10 @@ class AlertsController extends Controller
     function indexNotificationLog(Request $request)
     {
 
-        $logs = NotificationLog::with('user:id,username,first_name,last_name,pacpay_user_id,mobile_no,user_type_id')->byUser(Auth::user())->filter($request->all())->latest('id');
+        $logs = NotificationLog::with('user:id,username,first_name,last_name,pacpay_user_id,mobile_no,user_type_id','walletTransaction')
+            ->byUser(Auth::user())
+            ->filter($request->all())
+            ->latest('id');
 
         if ($request->request_origin == 'web')
             return datatables($logs)->toJson();

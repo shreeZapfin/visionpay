@@ -85,17 +85,18 @@ class BillerController extends Controller
 
         $billerFields = $request->validated();
 
-        foreach ($billerFields['biller_fields']['fields'] as &$field) {
-            if (!isset($field['check_regex'])) {
-                $field['check_regex'] = false;
+        if (isset($billerFields['biller_fields']['fields']))    #If fields are to be updated set check_regex correctly
+            foreach ($billerFields['biller_fields']['fields'] as &$field) {
+                if (!isset($field['check_regex'])) {
+                    $field['check_regex'] = false;
+                }
+                if ($field['check_regex'] == '1')
+                    $field['check_regex'] = true;
+                else
+                    $field['check_regex'] = false;
             }
-            if ($field['check_regex'] == '1')
-                $field['check_regex'] = true;
-            else
-                $field['check_regex'] = false;
-        }
 
-        if(isset($billerFields['biller_img_base64']))
+        if (isset($billerFields['biller_img_base64']))
             $billerFields['biller_img_url'] = (new FileHelper())->storeBase64FileOnS3($billerFields['biller_img_base64'], 'biller_logos');
 
 

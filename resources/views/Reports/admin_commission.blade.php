@@ -134,9 +134,10 @@
                         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span> </button>
                     </div>
-                    <div class="modal-body px-3">
-                        <form class="MoreDetails" name='MoreDetails' id='MoreDetails'>
-                            <div class="row gy-3">
+                    <div class="modal-body">
+                        <form name='MoreDetails' id='MoreDetails'>
+                            <div class="row">
+                                <div style="margin:5%;">
                                     <table class="table table-bordered" cellspacing="0">
                                         <tr>
                                             <th>Transaction Type:</th>

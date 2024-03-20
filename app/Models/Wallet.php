@@ -26,7 +26,7 @@ class Wallet extends Model
     /**
      * @var array
      */
-    protected $fillable = ['balance', 'created_at', 'updated_at','blocked_balance'];
+    protected $fillable = ['balance', 'created_at', 'updated_at','blocked_balance','wallet_limit'];
     protected $hidden = ['id','created_at','updated_at'];
 
     /**

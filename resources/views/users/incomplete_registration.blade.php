@@ -1,53 +1,102 @@
-@extends('layouts.master')
-@section('styles')
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Incomplete Registration</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Incomplete Registration</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+<!DOCTYPE html>
+<html lang="en">
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="tab-content mb-5">
-                                <div class="tab-pane active" id="tab-11">
-                                    <div class="card">
-                                        <div class="e-table px-5 pb-5 pd-12">
-                                            <div class="table-responsive table-lg">
-                                                <table class="table border-top table-bordered mb-0 text-nowrap incomplete_registration" id="dataTable" style="width:100%;">
-                                                    <thead class="border-top">
-                                                        <tr>
-                                                            <th class="border-bottom-0">Name</th>
-                                                            <th class="border-bottom-0">Email</th>
-                                                            <th class="border-bottom-0">Username</th>
-                                                            <th class="border-bottom-0 ">Mobile No</th>
-                                                            <th class="border-bottom-0">Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody></tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- /.container-fluid -->
-                                <div id='response'></div>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+    <link href="{{ asset('https://fonts.googleapis.com/icon?family=Material+Icons') }}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+
+        {{-- @include('datatables) --}}
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Incomplete Registration</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered dataTable" id="dataTable" width="100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">NAME</th>
+                                            <th class="text-center">EMAIL</th>
+                                            <th class="text-center">USERNAME</th>
+                                            <th class="text-center">MOBILE NO</th>
+                                            <th class="text-center">ACTION</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <!-- ROW CLOSED -->
                     </div>
-                    <!-- CONTAINER CLOSED -->
-                    
-                    
+                </div>
+                <!-- /.container-fluid -->
+                <div id='response'></div>
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
+
+
     <!-- Add KYC Model-->
     <div class="modal fade" id="add_kyc_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -55,12 +104,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Add KYC</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='addKyc' id='addKyc' enctype="multipart/form-data">
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Select Country</label>
                                     <select name="kyc_document_type" id="kyc_document_type"
                                         class="select2 form-control custom-select" required>
@@ -70,19 +121,29 @@
                                         <option value="PASSPORT">PASSPORT</option>
                                     </select>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Upload KYC document</label>
-                                    <input type="file" name="kyc_document_image" class="form-control"
+                                    <div class="input-group">
+                                        <input type="file" name="kyc_document_image" class="form-control"
                                             id="kyc_document_image" required>
+                                    </div>
                                 </div>
+                            </div>
+                            <br><br>
                         </div>
-                        <div class="text-center px-4 py-4">
+                        <div style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
-                                    data-user-id="" style="font-weight:500;">Add</button>
-                            <button type="button" class="btn btn-light cancel_btn" data-bs-dismiss="modal">Cancel</button>
+                                data-user-id="" style="font-weight:500;">Add</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
+
                     </form>
-                    <div id="response_kyc"></div>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
@@ -95,24 +156,36 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Add Selfie</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='addSelfie' id='addSelfie' enctype="multipart/form-data">
-                        <div class="row gy-3">
-                            <div class="col-xl-12">
-                                <label>Upload Selfie</label>
-                                    <input type="file" name="selfie_image" class="form-control"
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
+                                    <label>Upload Selfie</label>
+                                    <div class="input-group">
+                                        <input type="file" name="selfie_image" class="form-control"
                                             id="selfie_image" required>
+                                    </div>
+                                </div>
                             </div>
+                            <br><br>
                         </div>
-                        <div class="px-4 py-4 text-center">
+                        <div style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw"
                                 id='selfie_submit_button' data-user-id="" style="font-weight:500;">Add</button>
-                            <button type="button" class="btn btn-light cancel_btn" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
+
                     </form>
-                    <div id="response_selfie"></div>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
@@ -125,24 +198,36 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Add Profile</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='addProfile' id='addProfile' enctype="multipart/form-data">
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Upload Profile</label>
+                                    <div class="input-group">
                                         <input type="file" name="profile_pic_image" class="form-control"
                                             id="profile_pic_image" required>
+                                    </div>
                                 </div>
+                            </div>
+                            <br><br>
                         </div>
-                        <div class="px-4 py-4 text-center">
+                        <div style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw"
                                 id='profile_submit_button' data-user-id="" style="font-weight:500;">Add</button>
-                            <button type="button" class="btn btn-light cancel_btn" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
+
                     </form>
-                    <div id="response_profile"></div>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
@@ -155,42 +240,56 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Add Transaction Pin</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='addPin' id='addPin'>
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Transaction Pin</label>
+                                    <div class="input-group">
                                         <input type="text" name="transaction_pin" class="form-control"
                                             id="transaction_pin" required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Confirm Transaction Pin</label>
+                                    <div class="input-group">
                                         <input type="text" name="transaction_pin_confirmation"
                                             class="form-control" id="transaction_pin_confirmation" required>
+
+                                    </div>
                                 </div>
+                            </div>
+                            <br><br>
                         </div>
-                        <div class="px-4 py-4 text-center">
+                        <div style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='pin_submit_button'
                                 data-user-id="" style="font-weight:500;">Add</button>
-                                <button type="button" class="btn btn-light cancel_btn" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
+
                     </form>
-                    <div id="response_tin"></div>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
     </div>
-@endsection
-@section('scripts')
-<script type="text/javascript">
-        
-        //on cancle button make input fields empty & hide error message.
-        $('.cancel_btn').on('click', function () {
-            $(this).closest('form').find("input[type=text],input[type=file], textarea").val("");
-            $("#response_selfie, #response_profile , #response_tin, #response_kyc").hide();            
-        });
+
+
+
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+
+
+    <script type="text/javascript">
         $(document).ready(function() {
             $(".navbar-nav li").removeClass("active"); //this will remove the active class from
             //previously active menu item
@@ -224,25 +323,36 @@
                     "orderable": false,
                     render: function(data, type, row, meta) {
                         if (row.kyc_document_url == null) {
-                            return '<td class="text-center"><a title="User Details" href="{{ url('api/user') }}/' + 
-                                row.id + '/edit" ><i class="bi bi-pencil-square"></i></a></td><td class="text-center btn">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button title="Add KYC" data-userid="' +
-                                row.id + '" class="add_funds_entry btn btn-secondary"><i class="bi bi-upload fa-lg"></i></button></td>';
-                        } else if (row.selfie_img_url == null) {
-                            return '<td class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button title="Add Selfie" data-userid="' +
+                            return '<td class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a title="User Details" href="{{ url('api/user') }}/' +
+                                    row.id +
+                                    '/edit" style="color: rgb(30, 50, 250);"><i class="fas fa-fw fa-user"></i></a>&nbsp;&nbsp;<button title="Add KYC" data-userid="' +
                                 row.id +
-                                '" class="add_selfie_entry btn btn-info"><i class="bi bi-image"></i></button></td>';
+                                '" class="add_funds_entry" style="color: rgb(0,128,0); border: none; background: none; width="100px";"><i class="fa fa-file-upload fa-lg"></i></button></td>';
+
+
+                        } else if (row.selfie_img_url == null) {
+                            return '<td class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a title="User Details" href="{{ url('api/user') }}/' +
+                                    row.id +
+                                    '/edit" style="color: rgb(30, 50, 250);"><i class="fas fa-fw fa-user"></i></a>&nbsp;&nbsp;<button title="Add Selfie" data-userid="' +
+                                row.id +
+                                '" class="add_selfie_entry" style="color: rgb(0,255,128); border: none; background: none; width="100px";"><i class="fa fa-portrait fa-lg"></i></button></td>';
+
+
                         }
                         /* else if (row.profile_pic_img_url == null) {
                                                    return '<td class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button title="Add Profile Picture" data-userid="' +
-                                row.id +
-                                '" class="btn btn-warning add_profile_entry"><i class="bi bi-person"></i></button></td>';
+                                                       row.id +
+                                                       '" class="add_profile_entry" style="color: rgb(115, 106, 255); border: none; background: none; width="100px";"><i class="fa fa-portrait fa-lg"></i></button></td>';
+
+
                                                } */
                         else {
                             return '<td class="text-center">&nbsp;&nbsp;<button title="Set Transaction Pin Number" data-userid="' +
                                 row.id +
-                                '" class="add_transaction_pin" style="color: rgb(34,166,177); border: none; background: none; width="100px" ;"><i class="material-icons" style="font-size:15px;">Set Pin</i></button></td>';
+                                '" class="add_transaction_pin" style="color: rgb(0,255,128); border: none; background: none; width="100px";"><i class="material-icons" style="font-size:26px;">Set Pin</i></button></td>';
                         }
                     }
+
                 }],
                 "columns": [{
                         data: 'full_name'
@@ -311,20 +421,20 @@
                             var errors = $.parseJSON(data.responseText);
                             $.each(errors, function(key, value) {
                                 // console.log(key+ " " +value);
-                                $('#response_kyc').addClass(
+                                $('#response').addClass(
                                     "alert alert-danger");
 
                                 if ($.isPlainObject(value)) {
                                     $.each(value, function(key, value) {
                                         // console.log(key + " " +
                                         //     value);
-                                        $('#response_kyc').show()
+                                        $('#response').show()
                                             .append(value +
                                                 "<br/>");
 
                                     });
                                 } else {
-                                    $('#response_kyc').show().append(value +
+                                    $('#response').show().append(value +
                                         "<br/>"
                                     ); //this is my div with messages
                                 }
@@ -389,20 +499,20 @@
                             var errors = $.parseJSON(data.responseText);
                             $.each(errors, function(key, value) {
                                 // console.log(key+ " " +value);
-                                $('#response_selfie').addClass(
+                                $('#response').addClass(
                                     "alert alert-danger");
 
                                 if ($.isPlainObject(value)) {
                                     $.each(value, function(key, value) {
                                         // console.log(key + " " +
                                         //     value);
-                                        $('#response_selfie').show()
+                                        $('#response').show()
                                             .append(value +
                                                 "<br/>");
 
                                     });
                                 } else {
-                                    $('#response_selfie').show().append(value +
+                                    $('#response').show().append(value +
                                         "<br/>"
                                     ); //this is my div with messages
                                 }
@@ -466,20 +576,20 @@
                             var errors = $.parseJSON(data.responseText);
                             $.each(errors, function(key, value) {
                                 // console.log(key+ " " +value);
-                                $('#response_profile').addClass(
+                                $('#response').addClass(
                                     "alert alert-danger");
 
                                 if ($.isPlainObject(value)) {
                                     $.each(value, function(key, value) {
                                         // console.log(key + " " +
                                         //     value);
-                                        $('#response_profile').show()
+                                        $('#response').show()
                                             .append(value +
                                                 "<br/>");
 
                                     });
                                 } else {
-                                    $('#response_profile').show().append(value +
+                                    $('#response').show().append(value +
                                         "<br/>"
                                     ); //this is my div with messages
                                 }
@@ -543,20 +653,20 @@
                             var errors = $.parseJSON(data.responseText);
                             $.each(errors, function(key, value) {
                                 // console.log(key+ " " +value);
-                                $('#response_tin').addClass(
+                                $('#response').addClass(
                                     "alert alert-danger");
 
                                 if ($.isPlainObject(value)) {
                                     $.each(value, function(key, value) {
                                         // console.log(key + " " +
                                         //     value);
-                                        $('#response_tin').show()
+                                        $('#response').show()
                                             .append(value +
                                                 "<br/>");
 
                                     });
                                 } else {
-                                    $('#response_tin').show().append(value +
+                                    $('#response').show().append(value +
                                         "<br/>"
                                     ); //this is my div with messages
                                 }
@@ -571,6 +681,6 @@
 
         });
     </script>
+</body>
 
-
-@endsection
+</html>

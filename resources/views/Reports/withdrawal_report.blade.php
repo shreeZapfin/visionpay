@@ -1,130 +1,183 @@
-@extends('layouts.master')
-@section('styles')
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" rel="stylesheet" />
+
     {{-- Date Picker --}}
-        <link rel="stylesheet"
+    <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
 
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.bootstrap5.min.css">
 
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Withdrawal Report</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Withdrawal Report</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+</head>
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="tab-content mb-5">
-                                <div class="tab-pane active exprtbtns" id="tab-11">
-                                    <div class="card p-0">
-                                        <div class="card-body p-4">
-                                            <div class="row align-items-center justify-content-end">
-                                            <form name='filter_search' id='filter_search' style="margin-top: 20px;">
-                                                            <div class="input-group input-daterange">
-                                                                <div class="form-group col-sm">
-                                                                    <label>Select Status</label>
-                                                                    <select name="status" id="status" class="select2 form-control custom-select">
-                                                                        <option value="BANK_WITHDRAWAL_REQUEST" selected="selected">Bank Withdrawal
-                                                                            Request</option>
-                                                                        <option value="">All Request</option>
-                                                                        <option value="INITIATED_BY_AGENT">Initiated By Agent</option>
-                                                                        <option value="ADMIN_WITHDRAWAL">Admin Withdrawal</option>
-                                                                    </select>
-                                                                </div> &nbsp;&nbsp;
-                                                                <div class="form-group col-sm" style="padding-top: 29px !important;">
-                                                                    <input type="text" name="from_date" id="from_date"
-                                                                         class="form-control"
-                                                                        placeholder="From Date" />
-                                                                </div>&nbsp;&nbsp;
-                                                                <div class="input-group-addon" style="padding-top: 29px !important;">to</div> &nbsp;&nbsp;
-                                                                <div class="form-group col-sm" style="padding-top: 29px !important;">
-                                                                    <input type="text" name="to_date" id="to_date"
-                                                                         class="form-control" placeholder="To Date" />
-                                                                </div>
-                                                                <div class="form-group col-sm d-flex report_btns" style="padding-top: 29px !important;">
-                                                                    <button type="button" name="filter" id="filter"
-                                                                        class="btn btn-info btn-sm filter">Filter
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                <div class="e-table px-5 pb-5 pd-12">
-                                                    <div class="table-responsive table-lg">
-                                                        <table class="table border-top table-bordered mb-0 text-nowrap incomplete_registration1" id="dataTable" 
-                                                        style="width: 100% !important;">
-                                                            <thead class="border-top">
-                                                                <tr>
-                                                                    <th class="border-bottom-0">Date</th>
-                                                                    <th class="border-bottom-0">Withdrawal ID</th>
-                                                                    <th class="border-bottom-0">Amount</th>
-                                                                    <th class="border-bottom-0">Status</th>
-                                                                    <th class="border-bottom-0">Expired At</th>
-                                                                    <th class="border-bottom-0">Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody></tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Withdrawal Report</h5>
+
+                            <br>
+                            <form name='filterdate' id='filterdate'>
+
+                                <div class="col-12 col-sm-6 col-md-6 form-group">
+                                    <label>Select Status</label>
+                                    <select name="status" id="status" class="select2 form-control custom-select">
+                                        <option value="BANK_WITHDRAWAL_REQUEST" selected="selected">Bank Withdrawal
+                                            Request</option>
+                                        <option value="">All Request</option>
+                                        <option value="INITIATED_BY_AGENT">Initiated By Agent</option>
+                                        <option value="ADMIN_WITHDRAWAL">Admin Withdrawal</option>
+                                    </select>
                                 </div>
-                                <!-- /.container-fluid -->
-                                <div id='response'></div>
+                                <div class="col-12 col-sm-6 col-md-6 input-group input-daterange">
+                                    <input type="text" name="from_date" id="from_date" readonly class="form-control"
+                                        placeholder="Start Date" />&nbsp;&nbsp;
+                                    <div class="input-group-addon">to</div> &nbsp;&nbsp;
+                                    <input type="text" name="to_date" id="to_date" readonly class="form-control"
+                                        placeholder="End Date" />
+
+                                    &nbsp;&nbsp;
+                                    <button type="button" name="filter" id="filter"
+                                        class="btn btn-info btn-sm">Filter</button>
+                                </div>
+                            </form>
+
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Date</th>
+                                                <th class="text-center">Withdrawal Id</th>
+                                                <th class="text-center">Amount</th>
+                                                <th class="text-center">Status</th>
+                                                <th class="text-center">Expires At</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                        </tbody>
+
+
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <!-- ROW CLOSED -->
                     </div>
-                    <!-- CONTAINER CLOSED -->
+                    <!-- /.container-fluid -->
+                </div>
+                <!-- End of Main Content -->
 
-                    
-                    <!-- Paid Withdrawal -->
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Pacpay 2021</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+            </div>
+            <!-- End of Content Wrapper -->
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+            <i class="fas fa-angle-up"></i> </a>
+
+        <!-- Paid Withdrawal -->
         <div class="modal fade" id="paid_Withdrawal_form" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="exampleModalLabel">Paid Withdrawal</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span> </button>
                     </div>
-                    <div class="modal-body px-3">
+                    <div class="modal-body">
                         <form name='paidWithdrawal' id='paidWithdrawal'>
-                            <div class="row gy-3">
-                                    <div class="col-xl-12">
+                            <div class="row">
+                                <div class="col-md-6" style="margin:0 auto; display:block;">
+                                    <div class="form-group">
                                         <label>Bank Reference No.</label>
-                                        <input type="text" name="bank_reference_no" class="form-control"
+                                        <div class="input-group">
+                                            <input type="text" name="bank_reference_no" class="form-control"
                                                 id="bank_reference_no" required>
+
+                                        </div>
                                     </div>
-                                    <div class="col-xl-12">
+                                    <div class="form-group">
                                         <label>Remark</label>
-                                        <input type="text" name="remark" class="form-control" id="remark"
+                                        <div class="input-group">
+                                            <input type="text" name="remark" class="form-control" id="remark"
                                                 required>
+
+                                        </div>
                                     </div>
+                                </div>
+                                <br><br>
                             </div>
                             <div id='response'></div>
-                            <div class="text-center px-4 py-4">
+                            <div style="text-align:center">
                                 <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                                     data-withdrawal-id="" style="font-weight:500;">Submit</button>
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                             </div>
+
                         </form>
+
+
+                    </div>
+
+                    <div class="modal-footer">
+
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- Transaction More Details Modal-->
         <div class="modal fade" id="more_details_form" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -132,16 +185,16 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Withdrawal Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span> </button>
                     </div>
-                    <div class="modal-body px-3">
-                        <form class="MoreDetails" name='MoreDetails' id='MoreDetails'>
-                            <div class="row gy-3">
-                                <div>
+                    <div class="modal-body">
+                        <form name='MoreDetails' id='MoreDetails'>
+                            <div class="row">
+                                <div style="margin:5%;">
                                     <table class="table table-bordered" cellspacing="0">
                                         <tr>
-                                            <th  style="width:178px !important">Status:</th>
+                                            <th>Status:</th>
                                             <td><input type="text" class="form-control" id="WithStatus"
                                                     disabled="">
                                             </td>
@@ -179,31 +232,33 @@
                                 </div>
 
                             </div>
-                            <div style="text-align:center; padding:5%"> 
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-
+                            <div style="text-align:center; padding:5%">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                             </div>
                         </form>
+
+
+                    </div>
+
+                    <div class="modal-footer">
+
                     </div>
                 </div>
             </div>
         </div>
-@endsection
-@section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
-	
-    <!-- Datatables Cdn -->
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-    {{-- Date Picker --}}
+
+        <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+        <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+        <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+
+        {{-- Date Picker --}}
         <script src="{{ asset('vendor/moment/moment.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
 
@@ -217,7 +272,8 @@
                 $('.input-daterange').datepicker({
                     todayBtn: 'linked',
                     format: 'yyyy-mm-dd',
-                    autoclose: true
+                    autoclose: true,
+                    orientation: "bottom left"
                 });
 
 
@@ -251,18 +307,18 @@
                             targets: 5,
                             render: function(data, type, row, meta) {
                                 if (row.status == "BANK_WITHDRAWAL_REQUEST" && row.remark == null) {
-                                    return '<td class="text-center d-flex justify-content-center"><button title="Paid Withdrawal" data-withdrawalid= "' +
+                                    return '<td class="text-center"><button title="Paid Withdrawal" data-withdrawalid= "' +
                                         row
                                         .withdrawal_id +
-                                        '" class="paid_withdrawal btn  px-2 mx-2">Paid</button><button title="Failed Withdrawal" data-withdrawalid= "' +
+                                        '" class="paid_withdrawal btn btn-block" style="background-color: rgb(82, 208, 23); color: rgb(255,255,255); width: 80px;" >Paid</button><button title="Failed Withdrawal" data-withdrawalid= "' +
                                         row.withdrawal_id +
-                                        '" class="failed_withdrawal btn  px-2 mx-2">Failed</button><button title="More Details" data-userid="' +
+                                        '" class="failed_withdrawal btn btn-block" style="width: 80px; background-color: rgb(255,0,0); color: rgb(255,255,255);">Failed</button><button title="More Details" data-userid="' +
                                         row.id +
-                                        '" class="more_details btn"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button></td>';
+                                        '" class="more_details btn" style="color: rgb(30, 50, 250);"><i class="fa fa-arrow-right" aria-hidden="true"></i></button></td>';
                                 } else {
                                     return '<td class="text-center"><button title="More Details" data-userid="' +
                                         row.id +
-                                        '" class="more_details btn  px-2 mx-2"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button></td>';
+                                        '" class="more_details btn" style="color: rgb(30, 50, 250);"><i class="fa fa-arrow-right" aria-hidden="true"></i></button></td>';
                                 }
                             }
 
@@ -298,7 +354,7 @@
                         buttons: [{
                                 extend: 'excelHtml5',
                                 title: 'Excel',
-                                text: 'Excel',
+                                text: 'Export to excel'
                                 //Columns to export
                                 //exportOptions: {
                                 //     columns: [0, 1, 2, 3,4,5,6]
@@ -307,7 +363,7 @@
                             {
                                 extend: 'pdfHtml5',
                                 title: 'PDF',
-                                text: 'PDF'
+                                text: 'Export to PDF'
                                 //Columns to export
                                 //exportOptions: {
                                 //     columns: [0, 1, 2, 3, 4, 5, 6]
@@ -360,7 +416,7 @@
                         url: 'api/user/withdrawal',
                         type: 'get',
                         data: {
-                            'status': status
+                            'withdrawal_id': withdrawal_id
                         },
                         async: false,
                         success: function(data) {
@@ -598,4 +654,6 @@
 
             });
         </script>
-    @endsection
+</body>
+
+</html>

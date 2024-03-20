@@ -11,7 +11,7 @@
     <!-- Custom fonts for this template-->
     <link href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css') }}"
         rel="stylesheet" media="screen" />
-    <link href="{{ asset('http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css') }}"
+    <link href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css') }}"
         rel="stylesheet">
     <link rel="stylesheet"
         href="{{ asset('http://fortawesome.github.io/Font-Awesome/3.2.1/assets/font-awesome/css/font-awesome.css') }}">
@@ -19,8 +19,8 @@
     <link
         href="{{ asset('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i') }}"
         rel="stylesheet">
-
-        <!-- Custom styles for this template-->
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+    <!-- Custom styles for this template-->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <style>
         .my_img {
@@ -206,6 +206,7 @@
         <!-- Scroll to Top Button-->
         <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}"> <i class="fas fa-angle-up"></i> </a>
 
+        <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
         <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
         <!-- Bootstrap core JavaScript-->

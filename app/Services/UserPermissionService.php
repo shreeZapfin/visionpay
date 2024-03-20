@@ -13,7 +13,7 @@ use App\Enums\FeatureType;
 use App\Enums\UserType;
 use App\Enums\WalletTransactionType;
 use App\Models\User;
-
+#This class is used for Customer/Merchant Specific permissions
 class UserPermissionService
 {
 
@@ -25,6 +25,7 @@ class UserPermissionService
                 'bank_withdrawal' => true,
                 'bill_payment' => true,
                 'deposit' => true,
+                'agent_access' => false
             ];
         if ($userType == UserType::Merchant)
             return [
@@ -32,6 +33,7 @@ class UserPermissionService
                 'bank_withdrawal' => true,
                 'bill_payment' => true,
                 'deposit' => false,
+                'agent_access' => false
             ];
         if ($userType == UserType::Biller)
             return [
@@ -39,6 +41,7 @@ class UserPermissionService
                 'bank_withdrawal' => false,
                 'bill_payment' => false,
                 'deposit' => false,
+                'agent_access' => false
             ];
         if ($userType == UserType::Agent)
             return [
@@ -46,6 +49,7 @@ class UserPermissionService
                 'bank_withdrawal' => false,
                 'bill_payment' => false,
                 'deposit' => true,
+                'agent_access' => true
             ];
         if ($userType == UserType::SubAccount)
             return [
@@ -53,12 +57,22 @@ class UserPermissionService
                 'bank_withdrawal' => false,
                 'bill_payment' => false,
                 'deposit' => false,
+                'agent_access' => false
+            ];
+        if($userType == UserType::Staff)
+            return[
+                'fund_request' => false,
+                'bank_withdrawal' => false,
+                'bill_payment' => false,
+                'deposit' => false,
+                'agent_access' => false
             ];
 
     }
 
     function update_user_permission(User $user, $permissions)
     {
+
         $user->user_permission->update($permissions);
 
     }

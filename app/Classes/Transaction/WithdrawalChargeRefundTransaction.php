@@ -34,6 +34,7 @@ class WithdrawalChargeRefundTransaction implements TransactionInterface
 
         $charge = $walletTxnModel::where('transaction_id', $withdrawal->withdrawal_id)
             ->where('transaction_type', WalletTransactionType::WITHDRAWAL_CHARGE)
+            ->where('user_id', $withdrawal->user->id)
             ->first();
 
 

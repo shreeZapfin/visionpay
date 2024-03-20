@@ -14,6 +14,12 @@ class SubAccountCollectRequest extends FormRequest
      */
     public function authorize()
     {
+        if(Auth::user()->is_sub_account)
+            if($this->route('user')->id == Auth::user()->id)
+                return true;
+
+
+
         if (Auth::user()->has_sub_accounts)
             if ($this->route('user')->master_account_user_id == Auth::user()->id)
                 return true;

@@ -14,7 +14,7 @@
     <!-- Custom fonts for this template-->
     {{--<link href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css') }}"--}}
           {{--rel="stylesheet" media="screen" />--}}
-    {{--<link href="{{ asset('http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css') }}"--}}
+    {{--<link href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css') }}"--}}
           {{--rel="stylesheet">--}}
   {{--  <link rel="stylesheet"
           href="{{ asset('http://fortawesome.github.io/Font-Awesome/3.2.1/assets/font-awesome/css/font-awesome.css') }}">
@@ -32,58 +32,39 @@
 </head>
 
 <body id="page-top">
+
+
 <div class="container-fluid">
+
     <!-- DataTales Example -->
+
     <div class="card shadow mb-4" style="margin:auto; width: 70%; padding:10px; background-color:#1e32fa;">
         <div class="card-header py-3">
-            <!-- <img src="img/logo.png" width="60%" style="margin-left: 20%"> -->
+            <img src="img/logo.png" width="60%" style="margin-left: 20%">
             {{-- <h5 class="m-0 font-weight-bold text-primary" style="text-align: center">SCAN TO PAY</h5> --}}
-            <h5 class="m-0 font-weight-bold " style="text-align: center; background-color:#1e32fa; color: #FFFFFF;">SCAN TO PAY</h5>
+
         </div>
 
         <div class="card">
             <div class="card-body">
                         <div>
-                            <div class="" style="text-align: center;width: 240px;margin: 5px auto;height: 70px;display: block;">
-                              <!-- <div style="text-align:center; width:100%;"> -->
-                             @if(isset($userDetails['profile_pic_img_url']) && !empty($userDetails['profile_pic_img_url']))
-                              <div style="float:left;margin-right: 0;width: 30%;text-align: center;">
-                              @else
-                              <div style="float:left;margin-right: 0;width: 0%;text-align: center;">
-                              @endif
-                               <img src="{{ $userDetails['profile_pic_img_url'] }}" width="60" height="60" alt="img" id="profile-img" style="border-radius:50%;">
-                              </div>
-                              @if(isset($userDetails['profile_pic_img_url']) && !empty($userDetails['profile_pic_img_url']))
-                               <div style="float:left;width: 70%;text-align: center;">
-                               @else
-                               <div style="float:left;width: 100%;text-align: center;">
-                               @endif
-                                   <label for="exampleInputEmail1" style="width:100%; padding-bottom:0px;font-size:16px;"><b>{{$userDetails['full_name']}}</b></label> 
-                                   <label for="exampleInputEmail1">{{$userDetails['pacpay_user_id']}}</label>
-                                   <!-- <label for="exampleInputEmail1">{{$userDetails['mobile_no']}}</label> -->
-                               </div>
-                              <!-- </div> -->
-                            </div>
-                            
-                            <div class="qr_wrap" style="width:50%; margin:0 auto; text-align:center; display:block;"> 
+                            <div >
                                     <img src="data:image/png;base64, {!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::size(450)
                                             ->format('png')
                                         ->backgroundColor(255, 255, 255)
                                              ->merge('/public/img/qr_logo.png',0.4)
                                              ->errorCorrection('H')
-                                             ->generate($userDetails['qr_code_info'])) !!}" style="height:230px; width:230px; margin:0px auto; text-align:center;">
+                                             ->generate($userDetails['qr_code_info'])) !!} ">
 
-                                <!-- <h5 class="m-0 font-weight-bold "
+                                <h5 class="m-0 font-weight-bold "
                                     style="text-align: center; background-color:#1e32fa; color: #FFFFFF;">SCAN TO PAY
-                                </h5> -->
+                                </h5>
                             </div>
                             <br />
-                            <!-- <div class="form-group" style="text-align: center; color: #1e32fa"> -->
-                                <!-- <img src="{{ $userDetails['profile_pic_img_url'] }}"
-                                                            width="150" alt="img" id="profile-img"> -->
-                                <!-- <label for="exampleInputEmail1">{{$userDetails['full_name']}} ({{$userDetails['pacpay_user_id']}}) </label><br />
-                                <label for="exampleInputEmail1">{{$userDetails['mobile_no']}}</label> -->
-                            <!-- </div> -->
+                            <div class="form-group" style="text-align: center; color: #1e32fa">
+                                <label for="exampleInputEmail1">{{$userDetails['full_name']}} ({{$userDetails['pacpay_user_id']}}) </label><br />
+                                <label for="exampleInputEmail1">{{$userDetails['mobile_no']}}</label>
+                            </div>
                         </div>
 
             </div>
@@ -120,4 +101,5 @@
     });
 </script>
 </body>
+
 </html>

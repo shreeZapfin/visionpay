@@ -27,6 +27,9 @@ class WalletTransactionFilter extends ModelFilter
 
     function user_id($id)
     {
+        if($id=='all')
+            return $this;
+
         return $this->where('user_id', $id);
 
     }
@@ -68,11 +71,11 @@ class WalletTransactionFilter extends ModelFilter
                 $morphTo->morphWith([
                     BillPayment::class => [
                         'user:id,first_name,last_name,pacpay_user_id,user_type_id',
-                        'biller_user:users.id,first_name,last_name,pacpay_user_id,user_type_id'
+                        'biller_user:users.id,first_name,last_name,pacpay_user_id,user_type_id', 'biller'
                     ],
                     FundRequest::class => [
-                        'requesterUser:id,first_name,last_name,pacpay_user_id,user_type_id',
-                        'senderUser:id,first_name,last_name,pacpay_user_id,user_type_id'
+                        'requesterUser:id,first_name,last_name,pacpay_user_id,user_type_id,master_account_user_id', 'requesterUser.business','requesterUser.master_account:id,user_type_id,first_name,last_name,pacpay_user_id','requesterUser.master_account.business:user_id,business_name',
+                        'senderUser:id,first_name,last_name,pacpay_user_id,user_type_id', 'senderUser.business'
                     ],
                     Deposit::class => ['agent_user:users.id,first_name,last_name,pacpay_user_id,user_type_id', 'user:id,first_name,last_name,pacpay_user_id,user_type_id'],
                     Withdrawal::class => ['agent_user:users.id,first_name,last_name,pacpay_user_id,user_type_id', 'user:id,first_name,last_name,pacpay_user_id,user_type_id']
@@ -132,4 +135,27 @@ class WalletTransactionFilter extends ModelFilter
             }
         )->with('transaction');
     }
+
+    function show_txn_details($boolean)
+    {
+
+        if ($boolean)
+            return $this->with(['transaction' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([
+                    BillPayment::class => [
+                        'user:id,first_name,last_name,pacpay_user_id,user_type_id',
+                        'biller_user:users.id,first_name,last_name,pacpay_user_id,user_type_id'
+                    ],
+                    FundRequest::class => [
+                        'requesterUser:id,first_name,last_name,pacpay_user_id,user_type_id',
+                        'senderUser:id,first_name,last_name,pacpay_user_id,user_type_id'
+                    ],
+                    Deposit::class => ['agent_user:users.id,first_name,last_name,pacpay_user_id,user_type_id', 'user:id,first_name,last_name,pacpay_user_id,user_type_id'],
+                    Withdrawal::class => ['agent_user:users.id,first_name,last_name,pacpay_user_id,user_type_id', 'user:id,first_name,last_name,pacpay_user_id,user_type_id']
+                ]);
+            }]);
+
+
+    }
+
 }

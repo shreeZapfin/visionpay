@@ -1,743 +1,168 @@
-@extends('layouts.master')
-@section('styles')
-{{-- Date Picker --}}
-        <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+    <!-- Custom fonts for this template-->
+    {{-- Tabs --}}
+    <link href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css') }}"
+        rel="stylesheet" media="screen" />
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+    <!-- Custom styles for this template-->
+
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Country Code -->
+    {{-- <link href="{{ asset('css/intlTelInput.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/demo.css') }}" rel="stylesheet"> --}}
+
+    {{-- Crop Image --}}
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css"> --}}
+
+    {{-- Crop Image --}}
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css"> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.js"></script>
-<style type="text/css">
-    img {
-        display: block;
-        max-width: 100%;
-    }
 
-    .preview {
-        overflow: hidden;
-        width: 160px;
-        height: 160px;
-        margin: 10px;
-        border: 1px solid red;
-    }
+</head>
 
-    .modal-lg {
-        max-width: 1000px !important;
-    }
-</style>
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Billers</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Billers</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="tab-content mb-5">
-                                <div class="tab-pane active" id="tab-11">
-                                     <!-- COL-END -->
-                                        <div class="col-xl-12 p-0">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                                        <li class="nav-item" role="presentation">
-                                                                <button class="nav-link  tablinks" id="defaultOpen" data-is_active="1"
-                                                                role="tab" aria-controls="pills-home" aria-selected="true" >Active User</button>
-                                                            <!-- <button class="nav-link active tablinks" id="defaultOpen"
-                                                                data-bs-toggle="pill" data-bs-target="#pills-home" type="button"
-                                                                role="tab" aria-controls="pills-home"
-                                                                aria-selected="true" data-is_active="1">Active User</button> -->
-                                                        </li>
-                                                        <li class="nav-item" role="presentation">
-                                                            <!-- <button class="nav-link tablinks" id="pills-profile-tab" data-bs-toggle="pill"
-                                                                data-bs-target="#pills-profile" type="button" role="tab"
-                                                                aria-controls="pills-profile" aria-selected="false" data-is_active="0">InActive User</button> -->
-                                                                <button class="nav-link tablinks" id="inactiveuserbtn" data-is_active="0" role="tab"
-                                                                aria-controls="pills-profile" aria-selected="false">InActive User</button>
-                                                        </li>                                                        
-                                                    </ul>
-                                                    <script>
-                                                        $("#defaultOpen").addClass('active');
+<body id="page-top">
 
-                                                        $('.tablinks').on('click', function() {
-                                                            document.getElementById('TransReport').style.display = "block";
-                                                            $('.tablinks').removeClass('activeWallet');
-                                                            $(this).addClass('activeWallet');
-                                                            fetch_data($(this).data('is_active'));
-                                                        })
-                                                        $("#inactiveuserbtn").click(function(){
-                                                            $("#defaultOpen").removeClass('active');
-                                                            $("#inactiveuserbtn").addClass('active');
-                                                        })
-                                                        $("#defaultOpen").click(function(){
-                                                            $("#inactiveuserbtn").removeClass('active');
-                                                            $("#defaultOpen").addClass('active');
-                                                        })
-                                                    </script>
-                                                    {{-- @if ($userDetails->user_type_id == 2 or $useDetails->user_type_id == 4 or $userDetails->user_type_id == 5) --}}
-                                                    <div class="tab-content" id="TransReport">
-                                                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
-                                                            aria-labelledby="defaultOpen" tabindex="0">
-                                                            <form name='filterdate' id='filterdate'>
-                                                            <div class="input-group input-daterange">
-                                                                <div class="form-group col-sm">
-                                                                    <input type="text" name="from_date" id="from_date"
-                                                                         class="form-control"
-                                                                        placeholder="From Date" />
-                                                                </div>&nbsp;&nbsp;
-                                                                <div class="input-group-addon">to</div> &nbsp;&nbsp;
-                                                                <div class="form-group col-sm">
-                                                                    <input type="text" name="to_date" id="to_date"
-                                                                         class="form-control" placeholder="To Date" />
-                                                                </div>
-                                                                <div class="form-group col-sm d-flex report_btns">
-                                                                    <button type="button" name="filter" id="filter"
-                                                                        class="btn btn-info btn-sm filter">Filter
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                            <div class="e-table px-0 pb-5">
-                                                                <div class="table-responsive table-lg">
-                                                                    <table class="table border-top table-bordered mb-0 text-nowrap activeUsersTable" id="dataTable" style="width:100%;">
-                                                                        <thead class="border-top">
-                                                                            <tr>
-                                                                                <th class="border-bottom-0">Date</th>
-                                                                                <th class="border-bottom-0">Biller Name</th>
-                                                                                <th class="border-bottom-0">Biller Category Name</th>
-                                                                                <th class="border-bottom-0">Logo</th>
-                                                                                <th class="border-bottom-0 " id="billers">Biller Fields</th>
-                                                                                <th class="border-bottom-0">Actions</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody></tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tab-pane fade" id="pills-profile" role="tabpanel"
-                                                            aria-labelledby="pills-profile-tab" tabindex="0">
-                                                            <ul class="list-group">
-                                                                <li
-                                                                    class="list-group-item d-flex justify-content-between align-items-start">
-                                                                    <div class="me-auto d-flex align-items-center">
-                                                                        <div>
-                                                                            <input class="form-check-input me-2 mt-0"
-                                                                                name="checkbox1" type="checkbox" value="" checked="">
-                                                                            <label class="form-check-label" for="checkbox1"></label>
-                                                                        </div>
-                                                                        <div>
-                                                                            <div class="fw-bold">Heading</div>
-                                                                            <p class="mb-0 text-muted">Donec id elit non mi porta
-                                                                                gravida at eget metus. Maecenas sed diam eget risus
-                                                                                varius blandit.</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <span class="badge bg-info rounded-pill">14</span>
-                                                                </li>
-                                                                <li
-                                                                    class="list-group-item d-flex justify-content-between align-items-start">
-                                                                    <div class="me-auto d-flex align-items-center">
-                                                                        <div>
-                                                                            <input class="form-check-input me-2 mt-0"
-                                                                                name="checkbox1" type="checkbox" value="">
-                                                                            <label class="form-check-label" for="checkbox1"></label>
-                                                                        </div>
-                                                                        <div>
-                                                                            <div class="fw-bold">Heading</div>
-                                                                            <p class="mb-0 text-muted">Donec id elit non mi porta
-                                                                                gravida at eget metus. Maecenas sed diam eget risus
-                                                                                varius blandit.</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <span class="badge bg-danger rounded-pill">14</span>
-                                                                </li>
-                                                                <li
-                                                                    class="list-group-item d-flex justify-content-between align-items-start">
-                                                                    <div class="me-auto d-flex align-items-center">
-                                                                        <div>
-                                                                            <input class="form-check-input me-2 mt-0"
-                                                                                name="checkbox1" type="checkbox" value=""
-                                                                                >
-                                                                            <label class="form-check-label" for="checkbox1"></label>
-                                                                        </div>
-                                                                        <div>
-                                                                            <div class="fw-bold">Heading</div>
-                                                                            <p class="mb-0 text-muted">Donec id elit non mi porta
-                                                                                gravida at eget metus. Maecenas sed diam eget risus
-                                                                                varius blandit.</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <span class="badge bg-success rounded-pill">14</span>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Billers</h5>
+                            <button type="submit" class="btn-fill btn" id='submit_button'
+                                style="float:right; margin-top: -20px;">Add Biller</button>
+                        </div>
+
+                        {{-- Transaction Report --}}
+                        <section class="header">
+                            <div class="container py-4">
+                                <div class="tab">
+                                    <button class="tablinks" id="defaultOpen" data-is_active="1">Active
+                                        User</button>
+                                    <button class="tablinks" data-is_active="0">InActive User</button>
+
                                 </div>
-                                <div class="tab-pane" id="tab-12">
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/04.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/2.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
+                                <script>
+                                    $('.tablinks').on('click', function() {
+                                        document.getElementById('TransReport').style.display = "block";
+                                        $('.tablinks').removeClass('activeWallet');
+                                        $(this).addClass('activeWallet');
+                                        fetch_data($(this).data('is_active'));
+                                    })
+                                </script>
+                                <div>
+                                    {{-- @if ($userDetails->user_type_id == 2 or $useDetails->user_type_id == 4 or $userDetails->user_type_id == 5) --}}
+                                    <div id="TransReport" class="tabcontent">
+                                        <div class="card-body">
+
+                                            <form name='filterdate' id='filterdate'>
+                                                <div class="col-12 col-sm-6 col-md-6 input-group input-daterange">
+                                                    <input type="text" name="from_date" id="from_date" readonly
+                                                        class="form-control" placeholder="From Date" />&nbsp;&nbsp;
+                                                    <div class="input-group-addon">to</div> &nbsp;&nbsp;
+                                                    <input type="text" name="to_date" id="to_date" readonly
+                                                        class="form-control" placeholder="To Date" />
+
+                                                    &nbsp;&nbsp;
+                                                    <button type="button" name="filter" id="filter"
+                                                        class="btn btn-info btn-sm filter">Filter
+                                                    </button>
                                                 </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Adam Cotter</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>France</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 1456789867</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">30k</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">7,345</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">2,785</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/05.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/3.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
-                                                </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Dennis Trexy</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>United States</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 135792468</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">18k</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">6,452</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">6,452</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/06.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/4.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
-                                                </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Terrie Boaler</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>Canada</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 1567843567</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">25k</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">2,765</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">4,876</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/07.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/5.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
-                                                </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Dorothea Joicey</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>Indonesia</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 135792468</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">34k</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">1,789</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">2,456</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/08.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/6.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
-                                                </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Donnell Farries</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>Poland</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 1456789456</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">46k</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">2,567</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">3,345</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/09.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/7.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
-                                                </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Letizia Puncher</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>Ukraine</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 1234567893</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">24k</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">5,765</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">7,345</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/01.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/10.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
-                                                </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Dennis Trexy</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>California, USA</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 135792468</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">16K</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">6,452</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">6,452</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-xl-4 col-xxl-3">
-                                            <div class="card user-card">
-                                                <div class="user-image">
-                                                    <img src="{{asset('build/assets/images/media/files/05.jpg')}}" class="card-img-top" alt="...">
-                                                    <span class="avatar avatar-xl rounded-circle">
-                                                        <img src="{{asset('build/assets/images/users/1.jpg')}}" alt="" class="rounded-circle">
-                                                    </span>
-                                                </div>
-                                                <div class="card-body text-center">
-                                                    <div class="text-center">
-                                                        <div class="dropdown text-end">
-                                                            <a href="javascript:;" class="option-dots text-muted" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fe fe-more-vertical fs-16 lh-sm"></i> </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-message-square me-2 d-inline-flex"></i> Message
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-edit-2 me-2 d-inline-flex"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-eye me-2 d-inline-flex"></i> View
-                                                                </a>
-                                                                <a class="dropdown-item" href="javascript:;">
-                                                                    <i class="fe fe-trash-2 me-2 d-inline-flex"></i> Delete
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{{url('profile')}}" class="fs-18 fw-bold d-block">Sherilyn Metzel</a>
-                                                    <p class="text-muted text-center">Web Designer</p>
-                                                    <span class="text-muted mx-3"><i class="fe fe-map-pin mx-2 text-secondary "></i>Australia</span>
-                                                    <span class="text-muted"><i class="fe fe-phone mx-2 text-success "></i>+1 1567893456</span>
-                                                    <div class="text-center mt-3">
-                                                        <a class="btn btn-sm bg-primary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-facebook fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-secondary-transparent rounded-circle me-1" role="button" href="javascript:void(0);"><i class="mdi mdi-linkedin fs-16"></i></a>
-                                                        <a class="btn btn-sm bg-success-transparent rounded-circle" role="button" href="javascript:void(0);"><i class="mdi mdi-twitter fs-16"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="card-footer p-0">
-                                                    <div class="row row-sm">
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">23k</h5>
-                                                                <span class="fs-11">TOTAL POSTS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 border-end text-center">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">4,765</h5>
-                                                                <span class="fs-11">FOLLOWERS</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4">
-                                                            <div class="text-center p-3 text-dark">
-                                                                <h5 class="mb-1 fs-16 fw-600">2,765</h5>
-                                                                <span class="fs-11">FOLLOWING</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            </form>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="dataTable" width="100%"
+                                                    cellspacing="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">Date</th>
+                                                            <th class="text-center">Biller Name</th>
+                                                            <th class="text-center">Biller Category Name</th>
+                                                            <th class="text-center">Logo</th>
+                                                            <th class="text-center" id="billers">Biller Fields
+                                                            </th>
+                                                            <th class="text-center">Action</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
+                                    {{-- @endif --}}
+
+
                                 </div>
+
                             </div>
-                        </div>
-                        <!-- ROW CLOSED -->
+                        </section>
+
+
                     </div>
-                    <!-- CONTAINER CLOSED -->
-                    
-@endsection
- <!-- Add Funds Model-->
-<div class="modal fade" id="add_funds_form" tabindex="-1" aria-labelledby="add-userLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title" id="add-userLabel">Add Funds</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form name='addFunds' id='addFunds'>
-                        @csrf
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
-                                    <label class="form-label">Amount</label>
-                                    <input type="text" name="amount" class="form-control" id="amount" required>
-                                </div>
-                                <div class="col-xl-12">
-                                    <label class="form-label">Transaction Pin</label>
-                                    <input type="text" name="transaction_pin" 
-                                    id="transaction_pin"
-                                    autocomplete="one-time-code" required inputmode="numeric" maxlength="4">
-                                    <!-- <input type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="4" pattern="\d{4}"> -->
-                                </div>
-                                <input type="text" name="pin" id="pin" hidden/>
-                                <div class="col-xl-12">
-                                    <label>Description</label>
-                                    <textarea type="text" name="description" class="form-control" id="description"
-                                            required></textarea>
-                                </div>
-                                <div style="text-align:center">
-                                    <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
-                                        data-user-id="" style="font-weight:500;">Add</button>
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
-                                </div>
-                        </div>
-                    </form>
-                </div>
-                <!-- <div class="modal-footer">
-                    <div id='response'></div>
-                </div> -->
+                <!-- /.container-fluid -->
             </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+            <div id="loader"></div>
         </div>
+        <!-- End of Content Wrapper -->
     </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
 
     {{-- Add Biller --}}
     <div class="modal fade" id="biller_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -746,64 +171,84 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add Biller</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
                 <div class="modal-body">
                     <form name='addNewBiller' id='addNewBiller' enctype="multipart/form-data">
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Mobile Number</label>
+                                    <div class="input-group">
                                         <input type="text" name="mobile_no" class="form-control" id="mobile_no">
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Email</label>
+                                    <div class="input-group">
                                         <input type="email" name="email" class="form-control" id="email"
                                             required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Username</label>
+                                    <div class="input-group">
                                         <input type="text" name="username" class="form-control" id="username"
                                             value="$" pattern="^[$].{8,}"
                                             title="Must start with $ sign followed by at least 8 or more characters"
                                             required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Password</label>
+                                    <div class="input-group">
                                         <input type="password" name="password" class="form-control" id="password"
                                             required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Confirm Password</label>
+                                    <div class="input-group">
                                         <input type="password" name="password_confirmation" class="form-control"
                                             id="password_confirmation" required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Biller Name</label>
+                                    <div class="input-group">
                                         <input type="text" name="biller_name" class="form-control"
                                             id="biller_name" required>
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Select Service Category</label>
                                     <select class="select2 form-control custom-select" name="biller_category_id"
                                         id="biller_category_id" required>
                                     </select>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <div class="col-md-4 text-center">
                                         <div id="cropie-demo" style="width:250px"></div>
                                     </div>
                                     <label>Upload Logo</label>
+                                    <div class="input-group">
                                         <input type="file" name="biller_img" class="form-control" id="upload"
                                             required>
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Add Fields</label>
                                     <a href="javascript:void(0);" class="add_button" style="margin:0px"
                                         title="Add more fields"><img src="" /><i
                                             class="material-icons">add</i></a>
                                     <div class="fields">
-                                        <div class="col-xl-12">
+                                        <div class="form-group">
                                             <label>Placeholder</label>
                                             <div class="input-group">
                                                 <input type="text" name="biller_fields[fields][0][name]"
@@ -811,12 +256,12 @@
                                                     title="Placeholder(e.g. Mobile No, Biller No.)" required />
                                             </div>
                                         </div>
-                                        <div class="col-xl-12">
+                                        <div class="form-group">
                                             <label>Validate</label>
                                             <input type="checkbox" name="biller_fields[fields][0][check_regex]"
                                                 id="checkbox1" class="checkboxClass" value=0>
                                         </div>
-                                        <div class="col-xl-12" style="display: none;" id="regex">
+                                        <div class="form-group" style="display: none;" id="regex">
                                             <label>Regex</label>
                                             <div class="input-group">
                                                 <input type="text" name="biller_fields[fields][0][regex]"
@@ -829,18 +274,24 @@
                                                 Regex</a>
                                         </div>
                                     </div>
+                                </div>
+
                             </div>
                         </div>
                 </div>
                 <input type="hidden" name="user_type_id" value="5">
                 <input type="hidden" name="device_name" value="web">
-                <div class="text-center px-4 py-4">
+                <div style="text-align:center; padding:5%">
                     <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                         data-user-id="" style="font-weight:500;">Add</button>
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                 </div>
                 </form>
                 <div id='response'></div>
+            </div>
+
+            <div class="modal-footer">
+
             </div>
         </div>
     </div>
@@ -852,37 +303,49 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Biller</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
                 <div class="modal-body">
                     <form name='editBiller' id='editBiller'>
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
-                                    <label><b>Biller Name</b></label>
-                                    <input type="text" name="biller_name" class="form-control"
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
+                                    <label>Biller Name</label>
+                                    <div class="input-group">
+                                        <input type="text" name="biller_name" class="form-control"
                                             id="billerName" required>
 
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
-                                    <label><b>Biller Category</b></label>
+                                <div class="form-group">
+                                    <label>Biller Category</label>
                                     <select name="biller_category_id" id="billerCategory"
                                         class="select2 form-control custom-select" required>
                                     </select>
                                 </div>
-                                <label><b>Biller Fields</b></label>
+                                <br />
+                                <label>Biller Fields</label>
                                 {{-- <label>Add Fields</label>
                                 <a href="javascript:void(0);" class="add_button" style="margin:0px"
                                     title="Add more fields"><img src="" /><i class="material-icons">add</i></a> --}}
-                                <div id="appendfields" class="mt-0">
+                                <div id="appendfields">
                                 </div>
+                            </div>
+
                         </div>
-                        <div class="px-4 py-4 text-center">
+                        <div style="text-align:center; padding:5%">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                                 data-biller-id="" style="font-weight:500;">Update</button>
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
@@ -895,18 +358,22 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Biller Report</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    {{-- <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button> --}}
                 </div>
                 <div class="modal-body">
                     <form name='billerTrans' id='billerTrans'>
-                        @csrf
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Biller Name</label>
-                                    <input type="text" name="biller_name" class="form-control" id="billerNm"
+                                    <div class="input-group">
+                                        <input type="text" name="biller_name" class="form-control" id="billerNm"
                                             disabled="">
+
+                                    </div>
                                 </div>
+
                                 <div class="card-body" style="width: 700px;">
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTableBillerTrans" width="100%"
@@ -920,16 +387,26 @@
                                                     <th class="text-center">User</th>
                                                 </tr>
                                             </thead>
+
                                             <tbody class="tablebody">
+
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-center px-4 py-4">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
-                            </div>
-                        </form>
+
+                        </div>
+                        <div style="text-align:center; padding:5%">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
@@ -942,35 +419,55 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Add Funds</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
                 <div class="modal-body">
                     <form name='addFunds' id='addFunds'>
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Amount</label>
+                                    <div class="input-group">
                                         <input type="text" name="amount" class="form-control" id="amount"
                                             required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Transaction Pin</label>
+                                    <div class="input-group">
                                         <input type="text" name="transaction_pin" class="form-control"
                                             id="transaction_pin" required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Description</label>
+                                    <div class="input-group">
                                         <input type="text" name="description" class="form-control"
                                             id="description" required>
+
+                                    </div>
                                 </div>
+
+
                             </div>
-                        <div class="text-center px-4 py-4">
+
+                            <br><br>
+
+                        </div>
+                        <div style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                                 data-user-id="" style="font-weight:500;">Add</button>
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
+
                     </form>
+
+
                 </div>
+
                 <div class="modal-footer">
                     <div id='response'></div>
                 </div>
@@ -985,27 +482,38 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Add Biller Logo</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span></button>
                 </div>
                 <div class="modal-body">
                     <form enctype="multipart/form-data">
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <div class="col-md-4 text-center">
                                         <div id="cropie-demo" style="width:250px"></div>
                                     </div>
                                     <label>Upload Logo</label>
                                     <div class="input-group">
-                                        <input type="file" name="image" class="image form-control" id="upload" required>
+                                        <input type="file" name="image" class="image" id="upload" required>
                                     </div>
+
                                 </div>
+                            </div>
+                            <br><br>
                         </div>
-                        <div class="text-center px-4 py-4">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                        <div style="text-align:center">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel
+                            </button>
                         </div>
+
                     </form>
                     <div id='response'></div>
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
@@ -1015,14 +523,15 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="img-container">
                         <div class="row">
                             <div class="col-md-8">
-                                <img id="image" src="">
+                                <img id="image" src="" height="500px" width="500px">
                             </div>
                             <div class="col-md-4">
                                 <div class="preview"></div>
@@ -1031,7 +540,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     {{-- <button type="button" class="btn btn-primary" id="crop">Upload</button> --}}
                     <button type="button" class="btn btn-primary btn-rounded btn-fw"
                         id='upload_biller_submit_button' data-biller-id="" style="font-weight:500;">Upload
@@ -1041,22 +550,15 @@
         </div>
     </div>
 
-@section('scripts')
-            <script src="{{ asset('vendor/moment/moment.min.js') }}"></script>
-            <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+    {{-- {{-- country code --}}
+    <script src="js/intlTelInput.js"></script>
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.js"></script>
+    {{-- Crop Image --}}
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.js"></script>
 
-            
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-            <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
-            <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
-
-            {{-- Date Picker --}}
-            <script
-                src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
-            <script src="{{ asset('vendor/moment/moment.min.js') }}"></script>
-<script type="text/javascript">
+    <script type="text/javascript">
         function fetch_data(isActive) {
             //  console.log("IsActive: " + isActive);
             //Biller List
@@ -1087,31 +589,33 @@
 
                             return '<td class="text-center"><button title="Edit Biller Details" data-billerid="' +
                                 row.id +
-                                '" class="bank_entry"><i class="bi bi-pencil"></i></button><button title="Upload Biller Logo" data-billerid="' +
+                                '" class="bank_entry btn" style="color: rgb(30, 50, 250);"><i class="fa fa-edit fa-lg"></i></button><button title="Upload Biller Logo" data-billerid="' +
                                 row.id +
-                                '" class="biller_logo btn"><i class="bi bi-upload"></i></button><button title="Transaction Details" data-billerid="' +
+                                '" class="biller_logo btn" style="color: rgb(30, 50, 250);"><i class="fa fa-upload"></i></button><button title="Transaction Details" data-billerid="' +
                                 row.id +
-                                '" class="biller_transaction btn" ><i class="bi bi-list-check"></i></button><a class="editusercls" title="Edit" href="{{ url('api/user') }}/' +
+                                '" class="biller_transaction btn" style="color: rgb(0,128,0);"><i class="fa fa-list"></i></button><a title="Edit" href="{{ url('api/user') }}/' +
                                 row.user_id +
-                                '/edit" ><i class="bi bi-pencil-square"></i></a><button title="Add Funds" data-userid="' +
+                                '/edit" style="color: rgb(30, 50, 250);"><i class="fas fa-fw fa-user"></i></a><button title="Add Funds" data-userid="' +
                                 row.user_id +
-                                '" class="add_funds_entry btn btn-sm btn-icon " style="font-size:16px"><i class="bi bi-cash"></i></button><button title="Disable Biller" data-billerid= "' +
-                                row .id +
-                                '"  class="btn btn-danger disable_biller btn-block mt-3" >Disable </button></td>';
+                                '" class="add_funds_entry" style="color: rgb(0,128,0); border: none; background: none; width="100px";"><i class="fa fa-money fa-lg"></i></button><button title="Disable Biller" data-billerid= "' +
+                                row
+                                .id +
+                                '"  class="btn disable_biller btn-block" style="background-color: rgb(95,158,160); color: rgb(255,255,255); width: 80px;" >Disable </button></td>';
                         } else {
                             return '<td class="text-center"><button title="Edit Biller Details" data-billerid="' +
                                 row.id +
-                                '" class="bank_entry "><i class="bi bi-pencil"></i></button><button title="Upload Biller Logo" data-billerid="' +
+                                '" class="bank_entry btn" style="color: rgb(30, 50, 250);"><i class="fa fa-edit fa-lg"></i></button><button title="Upload Biller Logo" data-billerid="' +
                                 row.id +
-                                '" class="biller_logo btn"><i class="bi bi-upload"></i></button><button title="Transaction Details" data-billerid="' +
+                                '" class="biller_logo btn" style="color: rgb(30, 50, 250);"><i class="fa fa-upload"></i></button><button title="Transaction Details" data-billerid="' +
                                 row.id +
-                                '" class="biller_transaction btn" ><i class="bi bi-list-check"></i></button><a title="Edit" href="{{ url('api/user') }}/' +
+                                '" class="biller_transaction btn" style="color: rgb(0,128,0);"><i class="fa fa-list"></i></button><a title="Edit" href="{{ url('api/user') }}/' +
                                 row.user_id +
-                                '/edit" class="editusercls" ><i class="bi bi-pencil-square"></i></a><button title="Add Funds" data-userid="' +
+                                '/edit" style="color: rgb(30, 50, 250);"><i class="fas fa-fw fa-user"></i></a><button title="Add Funds" data-userid="' +
                                 row.user_id +
-                                '" class="add_funds_entry btn btn-sm btn-icon "style="font-size:16px"><i class="bi bi-cash"></i></button><button title="Enable Biller" data-billerid= "' +
-                                row.id +
-                                '"  class="btn btn-info enable_biller btn-fill-approve btn-block mt-3" >Enable</button></td>';
+                                '" class="add_funds_entry" style="color: rgb(0,128,0); border: none; background: none; width="100px";"><i class="fa fa-money fa-lg"></i></button><button title="Enable Biller" data-billerid= "' +
+                                row
+                                .id +
+                                '"  class="btn enable_biller btn-fill-approve btn-block" style="background-color: rgb(0,128,0); width: 80px;" >Enable</button></td>';
                         }
                     }
 
@@ -1220,17 +724,6 @@
 
                 $('#submit_button').attr('data-user-id', $(this).data('userid'));
             });
-            $('.input-daterange').datepicker({
-                        todayBtn: 'linked',
-                        format: 'yyyy-mm-dd',
-                        autoclose: true
-                    });
-            $('#filter').click(function() {
-                        var from_date = $('#from_date').val();
-                        var to_date = $('#to_date').val();
-                        // console.log($('.activeWallet').data('wallet_type'));
-                        fetch_data(from_date, to_date, $('.activeWallet').data('wallet_type'));
-                    });
             //Add funds
             $('#addFunds').on('submit', function(e) {
                 e.preventDefault();
@@ -1473,7 +966,7 @@
             });
             $modal.on('shown.bs.modal', function() {
                 cropper = new Cropper(image, {
-                    aspectRatio: 1,
+                    aspectRatio: 0,
                     viewMode: 3,
                     preview: '.preview'
                 });
@@ -1513,7 +1006,7 @@
 
                         $.ajax({
                             url: '{{ url('api/biller') }}/' + Biller_Id,
-                            type: 'post',
+                            type: 'patch',
                             dataType: 'JSON',
                             data: {
                                 'biller_img_base64': base64data
@@ -1618,22 +1111,24 @@
                         //var fields = '';
                         i = 0;
                         $.each(data.data.biller_fields.fields, function($index, $value) {
+
+
                             $('#appendfields').append(
-                                '<div class="col-xl-12 p-0" style="border-bottom: 1px solid #e4e4e4;margin-bottom: 10px;"><div class="row"><div class="col-xl-6"><label>Placeholder</label><div class="input-group"><input title="Placeholder" class="billerInput" type="text" name="biller_fields[fields][' +
+                                '<div class="form-group"><label>Placeholder</label><div class="input-group"><input title="Placeholder" type="text" name="biller_fields[fields][' +
                                 i +
                                 '][name]" id="name" value="' +
                                 $value.name +
-                                '"></div></div><div class="col-xl-6"><label>Regex</label><div class="input-group"><input  class="billerInput" title="Regex" type="text" name="biller_fields[fields][' +
+                                '"></div><label>Regex</label><div class="input-group"><input title="Regex" type="text" name="biller_fields[fields][' +
                                 i +
                                 '][regex]" id="regex" value="' +
-                                $value.regex + '"></div></div></div>' +
-                                '<div class="col-xl-6 p-0 d-flex justify-text-center mt-2" style="width:-webkit-fill-available;"><label style="width: 100%;padding-top: 6px;">Check regex</label><div class="input-group"><input  class="billerInput" title="Regex" id="checkbox_' +
+                                $value.regex + '"></div>' +
+                                '<label>Check regex</label><div class="input-group"><input title="Regex" id="checkbox_' +
                                 i +
-                                '" type="checkbox"  class="checkboxClass"  name="biller_fields[fields][' +
+                                '" type="checkbox"  class="checkboxClass" name="biller_fields[fields][' +
                                 i +
                                 '][check_regex]" id="check_regex" value="' +
-                                $value.check_regex + '"></div></div>' +
-                                '</div>');
+                                $value.check_regex + '"></div>' +
+                                '</div><br/>');
 
                             if ($value.check_regex)
                                 $('#checkbox_' + i).attr('checked', 'checked');
@@ -1650,7 +1145,7 @@
 
             $("#edit_billers_form").on("hide.bs.modal", function() {
 
-                // window.location.reload();
+                window.location.reload();
             });
             $('#editBiller').on('submit', function(e) {
                 e.preventDefault();
@@ -1672,13 +1167,12 @@
                         if (data.error_code == 0) {
                             //console.log(data);
                             $('#edit_billers_form').modal('hide');
-                            
+                            $('#dataTable').DataTable().ajax.reload();
                             Swal.fire({
                                 title: "" + data.meta.message,
                                 icon: 'success',
                                 showCloseButton: true
                             })
-                            $('#dataTable').DataTable().ajax.reload();
                         } else {
                             swal(data.meta.message, "error");
                         }
@@ -1785,7 +1279,7 @@
 
 
             //Add Biller
-            $("#add_biller_button").on('click', function() {
+            $("#submit_button").on('click', function() {
                 $('#biller_form').modal('show');
 
                 //Get biller category list
@@ -1922,14 +1416,16 @@
                 });
             });
 
+            $("#biller_form").on("hide.bs.modal", function() {
+
+                window.location.reload();
+            });
+
+
+
+
         });
+    </script>
+</body>
 
-            // $("#biller_form").on("hide.bs.modal", function() {
-
-            //     window.location.reload();
-            // });
-
-</script>
-
-@endsection
-
+</html>

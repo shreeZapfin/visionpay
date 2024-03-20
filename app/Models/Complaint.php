@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Permissions;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,7 +25,7 @@ class Complaint extends Model
     /**
      * @var array
      */
-    protected $fillable = ['complaint_type_id', 'created_at', 'updated_at', 'transaction_id', 'user_complaint_description', 'complaint_status', 'admin_resolution_description', 'resolved_at', 'user_id'];
+    protected $fillable = ['complaint_type_id', 'created_at', 'updated_at', 'transaction_id', 'user_complaint_description', 'complaint_status', 'admin_resolution_description', 'resolved_at', 'user_id','resolved_by'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -62,7 +63,7 @@ class Complaint extends Model
     public function scopeByUser($query, User $user)
     {
 
-        if ($user->is_admin)
+        if ($user->is_admin || $user->hasPermissionTo(Permissions::MANAGE_COMPLAINT))
             return $query;
         return $query->where('user_id', $user->id);
     }
