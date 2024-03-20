@@ -18,7 +18,7 @@ class StoreDepositRequest extends FormRequest
      */
     public function authorize()
     {
-        if (Auth::user()->user_type_id == UserType::Agent)
+        if (Auth::user()->user_type_id == UserType::Agent || Auth::user()->hasTokenAbilityTo('agent-access'))
             if ((new UserPermissionService())->authorizeUserPermission(Auth::user(), FeatureType::DEPOSIT))
                 return true;
         return false;

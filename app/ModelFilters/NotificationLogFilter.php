@@ -22,6 +22,7 @@ class NotificationLogFilter extends ModelFilter
     function created_between($dates)
     {
         $dates[0] = Carbon::parse($dates[0])->startOfDay();
+        $dates[1] = Carbon::parse($dates[1])->endOfDay();
         return $this->whereBetween('created_at', $dates);
 
     }
@@ -33,7 +34,6 @@ class NotificationLogFilter extends ModelFilter
 
     function entity_event($event)
     {
-
         return $this->where('entity_event', $event);
     }
 

@@ -1,17 +1,27 @@
-@extends('layouts.custom-master1')
+@extends('layouts.app')
 
-@section('styles')
+<!DOCTYPE html>
+<html lang="en">
 
-<title>Pacpay Admin - Login</title>
+<head>
 
-<!-- Custom fonts for this template-->
-<link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-<link
-    href="{{ asset('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i') }} "
-    rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-<!-- Custom styles for this template-->
-<link href="{{ asset('css/sb-admin-2.min.css') }} " rel="stylesheet">
+    <title>Pacpay Admin - Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link
+        href="{{ asset('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i') }} "
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{{ asset('css/sb-admin-2.min.css') }} " rel="stylesheet">
+</head>
 
 <style type="text/css">
     .bg-login-image {
@@ -23,106 +33,107 @@
 
 </style>
 
+<body style="background: url(img/background.jpeg);">
 
-@endsection
 
-@section('content')
-	
-<div class="row">
-                <!-- CONTAINER OPEN -->
-                <div class="container-lg">
-                    <div class="row justify-content-center mt-4 mx-0">
-                    <!-- <div class="col-lg-6 d-none d-lg-block bg-login-image"></div> -->
-                        <div class="col-xl-4 col-lg-6">
-                            <div class="card shadow-none">
-                                <div class="card-body p-sm-6">
-                                    <div class="text-center mb-4">
-                                        <h4 class="mb-1">Welcome Back!</h4>
-                                        <p>Sign in to your account to continue.</p>
+    <div class="container" style="text-align: center;">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10 col-md-9">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row" style="background-color: #F7F7F7;">
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4"><b>Welcome
+                                                Back!</b></h1>
+                                        {{-- <img src="img/logoo.jpeg" alt="PacpayLogo"> --}}
                                     </div>
                                     <br>
                                     <form method="POST" action="{{ route('login') }}" class="user">
                                         @csrf
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="mb-3">
-                                                    <label class="mb-2 fw-500">Email<span class="text-danger ms-1">*</span></label>
-                                                    <input class="form-control ms-0 @error('email') is-invalid @enderror"
+                                        <div class="form-group">
+
+                                            <div class="input-group">
+                                                <input type="email"
+                                                    class="form-control form-control-user @error('email') is-invalid @enderror"
                                                     id="email" aria-describedby="emailHelp"
                                                     placeholder="Enter Email Address..." name="username"
                                                     value="{{ old('email') }}" required autocomplete="email"
                                                     autofocus>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-fw fa-user"></i>
+                                                    </span>
                                                 </div>
-                                                @error('email')
+                                            </div>
+
+
+                                            @error('email')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
-                                                @enderror
-                                            </div>
-                                            <input type="hidden" value="web" name="device_name">
-                                            <div class="col-sm-12">
-                                                <div class="mb-3">
-                                                    <label class="mb-2 fw-500">Password<span class="text-danger ms-1">*</span></label>
-                                                    <div >
-                                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                                        id="password" placeholder="Password" name="password" required autocomplete="current-password">
-                                                    </div>
+                                            @enderror
+                                        </div>
+                                        <input type="hidden" value="web" name="device_name">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="password"
+                                                    class="form-control form-control-user @error('password') is-invalid @enderror"
+                                                    id="password" placeholder="Password" name="password" required
+                                                    autocomplete="current-password">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">
+                                                        <i class="far fa-eye" id="togglePassword"></i>
+                                                    </span>
                                                 </div>
-                                                @error('password')
+                                            </div>
+
+
+                                            @error('password')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-xl-12">
-                                                <div class="d-flex mb-3">
-                                                    <div class="form-check d-flex align-items-center">
-                                                        <input class="form-check-input" type="checkbox" name="remember"
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox small">
+                                                <input type="checkbox" class="custom-control-input" name="remember"
                                                     id="remember">
-                                                        <label class="form-check-label tx-15" for="flexCheckDefault">
-                                                            Remember me
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="d-grid mb-3">
-                                                    <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
-                                                    <!-- <a href="{{url('index')}}" class="btn btn-primary btn-user"> Login</a> -->
-                                                </div>
-                                                <div class="ms-auto" style="text-align: center;">
-                                                        <a href="{{url('forgot-password')}}" class="tx-primary ms-1 tx-13">Forgot Password?</a>
-                                                </div>
+                                                <label class="custom-control-label" for="remember">Remember
+                                                    Me</label>
                                             </div>
                                         </div>
+                                        {{-- <a href="{{ asset('index') }} " class="btn btn-primary btn-user btn-block">
+                                            {{ __('Login') }}                                        </a> --}}
+
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+
                                     </form>
-                                    <!-- <p class="text-center mt-3 mb-2">Signin with</p>
-                                    <div class="d-flex justify-content-center">
-                                        <div class="btn-list">
-                                            <button class="btn btn-icon bg-primary-transparent rounded-pill border-0" type="button">
-                                                <span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
-                                            </button>
-                                            <button class="btn btn-icon bg-primary-transparent rounded-pill border-0" type="button">
-                                                    <span class="btn-inner--icon"><i class="fa fa-google"></i></span>
-                                                </button>
-                                            <button class="btn btn-icon bg-primary-transparent rounded-pill border-0" type="button">
-                                                    <span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
-                                                </button>
-                                            <button class="btn btn-icon bg-primary-transparent rounded-pill border-0" type="button">
-                                                    <span class="btn-inner--icon"><i class="fa fa-linkedin"></i></span>
-                                            </button>
-                                        </div>
-                                    </div> -->
+                                    <hr>
+                                    <div class="text-center">
+                                        <a class="small" href="{{ asset('forgot-password') }} ">Forgot
+                                            Password?</a>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- CONTAINER CLOSED -->
+            </div>
+        </div>
+    </div>
 
-@endsection
 
-@section('scripts')
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
@@ -130,21 +141,21 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
-<script>
-    $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
 
-        //toggler onclick
-        $("#togglePassword").on('click', function() {
-            var x = document.getElementById("password");
-            if (x.type === "password") {
-                x.type = "text";
-            } else {
-                x.type = "password";
-            }
-        });
+            //toggler onclick
+            $("#togglePassword").on('click', function() {
+                var x = document.getElementById("password");
+                if (x.type === "password") {
+                    x.type = "text";
+                } else {
+                    x.type = "password";
+                }
+            });
 
-    })
-</script>
-	
+        })
+    </script>
+</body>
 
-@endsection
+</html>

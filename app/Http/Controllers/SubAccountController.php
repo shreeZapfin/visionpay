@@ -54,7 +54,16 @@ class SubAccountController extends Controller
 
         $this->validate($request, [
             'username' => 'required|unique:users,username',
-            'password' => 'required|confirmed|min:4',
+            'password' => [
+                'required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+                'confirmed'
+            ],
             'master_account_user_id' => Auth::user()->is_admin ? 'required' : ''
         ]);
 

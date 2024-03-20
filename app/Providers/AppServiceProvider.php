@@ -3,9 +3,12 @@
 namespace App\Providers;
 
 use App\Enums\WalletTransactionType;
+use App\Http\Middleware\StoreApiEventMiddleware;
+use App\Http\Middleware\StoreApiRequestsMiddleware;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
         }
+        $this->app->singleton(StoreApiEventMiddleware::class);
+        $this->app->singleton(StoreApiRequestsMiddleware::class);
     }
 
     /**
@@ -30,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-
+        URL::forceScheme('https');
         //ADD MODELS ADDED TO WALLET TRANSACTIONS HERE
         Relation::morphMap([
             WalletTransactionType::WALLET_TRANSFER => 'App\Models\FundRequest',
@@ -46,6 +51,9 @@ class AppServiceProvider extends ServiceProvider
             WalletTransactionType::WITHDRAWAL_REFUND => 'App\Models\Withdrawal',
             WalletTransactionType::MERCHANT_PAYMENT_CHARGE => 'App\Models\FundRequest',
             WalletTransactionType::P2P_PAYMENT_CHARGE => 'App\Models\FundRequest',
+            WalletTransactionType::MERCHANT_PAYMENT_CHARGE_REFUND => 'App\Models\FundRequest',
+            WalletTransactionType::WALLET_TRANSFER_REFUND => 'App\Models\FundRequest',
+            WalletTransactionType::CASHBACK_REFUND => 'App\Models\FundRequest'
         ]);
     }
 }

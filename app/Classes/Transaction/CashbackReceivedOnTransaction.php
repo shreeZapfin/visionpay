@@ -13,6 +13,7 @@ use App\Enums\WalletTransactionType;
 use App\Models\Deposit;
 use App\Models\SystemSetting;
 use App\Models\WalletTransaction;
+use App\Services\ReedeemVoucherService;
 use BeyondCode\Vouchers\Events\VoucherRedeemed;
 use BeyondCode\Vouchers\Models\Voucher;
 
@@ -47,18 +48,7 @@ class CashbackReceivedOnTransaction implements TransactionInterface
 
     function calculate_voucher_cashback(Voucher $voucher)
     {
-
-        $voucherData = json_decode($voucher->data);
-
-        if ($voucherData->cashback_type == 'PERCENTAGE') {
-            $cashbackAmount = $this->txnAmount * $voucherData->cashback_amount / 100;
-            if ($cashbackAmount > $voucherData->reward_upto_max_amount)
-                $cashbackAmount = $voucherData->reward_upto_max_amount;
-        } else {
-            $cashbackAmount = $voucherData->cashback_amount;
-        }
-
-        return $cashbackAmount;
+        return (new ReedeemVoucherService())->getEligibleCashbackOnVoucher($voucher, $this->txnAmount);
     }
 
 }

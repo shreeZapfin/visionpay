@@ -22,6 +22,7 @@ class ComplaintFilter extends ModelFilter
     function raised_between($dates)
     {
         $dates[0] = Carbon::parse($dates[0])->startOfDay();
+        $dates[1] = Carbon::parse($dates[1])->endOfDay();
         return $this->whereBetween('created_at', $dates);
 
     }
@@ -45,9 +46,16 @@ class ComplaintFilter extends ModelFilter
     function resolved_between($dates)
     {
         $dates[0] = Carbon::parse($dates[0])->startOfDay();
+        $dates[1] = Carbon::parse($dates[1])->endOfDay();
         return $this->whereBetween('resolved_at', $dates);
 
     }
+
+    function complaint_id($id)
+    {
+        return $this->where('id',$id);
+    }
+
 
 
 }

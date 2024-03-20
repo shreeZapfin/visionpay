@@ -13,5 +13,7 @@ final class NotificationEntities extends Enum
     const COMPLAINT = 'Complaint';
     const PAYMENT = 'Payment';
     const VOUCHER = 'Voucher';
+    const WALLET = 'Wallet';
+    const KYC = 'Kyc';
 
 }

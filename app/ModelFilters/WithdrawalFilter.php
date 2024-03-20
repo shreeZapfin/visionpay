@@ -70,4 +70,10 @@ class WithdrawalFilter extends ModelFilter
 
     }
 
+    function withdrawal_id($id)
+    {
+        return $this->where('withdrawal_id',$id);
+    }
+
+
 }

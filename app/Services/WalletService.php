@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: GameBoY
@@ -9,7 +10,10 @@
 namespace App\Services;
 
 
+use App\Events\WalletLimitBreachedEvent;
+use App\Exceptions\WalletLimitBreachedException;
 use App\Models\Wallet;
+use Illuminate\Support\Facades\Auth;
 
 class WalletService
 {
@@ -18,11 +22,16 @@ class WalletService
     function __construct(Wallet $wallet)
     {
         $this->wallet = $wallet;
-
     }
 
     function credit_wallet(array $transactionDetails)
     {
+        if ($this->is_wallet_limit_breached($transactionDetails['amount'])) {
+            $transactionDetails['auth_user_id'] = (Auth::user()) ? Auth::user()->id : $this->wallet->user->id;
+            WalletLimitBreachedEvent::dispatch($this->wallet, $transactionDetails);
+            throw new WalletLimitBreachedException();
+        }
+
         $wallet = Wallet::lockForUpdate()->find($this->wallet->id);
         (new WalletTransactionService())->create_wallet_transaction([
             'transaction_id' => $transactionDetails['transaction_id'],
@@ -35,7 +44,6 @@ class WalletService
         ]);
         $wallet->balance += $transactionDetails['amount'];
         $wallet->save();
-
     }
 
     function debit_wallet(array $transactionDetails)
@@ -53,8 +61,6 @@ class WalletService
         ]);
         $wallet->balance -= $transactionDetails['amount'];
         $wallet->save();
-
-
     }
 
     function is_wallet_balance_sufficient($amount)
@@ -65,7 +71,6 @@ class WalletService
             return true;
 
         return false;
-
     }
 
     function get_wallet_balance()
@@ -77,8 +82,26 @@ class WalletService
     function get_complaints_blocked_balance()
     {
         return $this->wallet->user->wallet_transactions();
-
     }
 
+    function get_wallet_limit()
+    {
+        return $this->wallet->wallet_limit;
+    }
 
+    function is_wallet_limit_breached($amount)
+    {
+        $totalLimit = $this->wallet->balance + $amount;
+
+        if ($totalLimit > $this->wallet->wallet_limit)
+            return true;
+
+        return false;
+    }
+
+    function update_wallet_limit($limit)
+    {
+        $this->wallet->wallet_limit = $limit;
+        $this->wallet->save();
+    }
 }

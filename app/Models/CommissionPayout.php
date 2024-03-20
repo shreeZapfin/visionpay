@@ -36,19 +36,19 @@ class CommissionPayout extends Model
      */
     public function agent_user()
     {
-        return $this->hasOneThrough('App\Models\User','App\Models\Agent','id','id','agent_id','user_id');
+        return $this->hasOneThrough('App\Models\User', 'App\Models\Agent', 'id', 'id', 'agent_id', 'user_id');
     }
 
 
-
-    public function scopeByUser($query,User $user)
+    public function scopeByUser($query, User $user)
     {
-        if($user->is_admin)
+        if ($user->is_admin)
             return $query;
-        if($user->user_type_id==\App\Enums\UserType::Agent)
-            return $query->whereHas('agent',function($query) use($user){
-                $query->where('user_id',$user->id);
-            });
+//        if($user->user_type_id==\App\Enums\UserType::Agent)
+
+        return $query->whereHas('agent', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        });
     }
 
 }

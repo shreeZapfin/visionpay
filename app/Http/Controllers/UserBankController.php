@@ -110,9 +110,14 @@ class UserBankController extends Controller
         return ResponseFormatter::success($user_bank, 'Bank updated succesfully');
     }
 
-    function index_banks()
+    function index_banks(Request $request)
     {
-        $banks = Bank::all();
+
+        if ($request->show_all)
+            $banks = Bank::withTrashed()->get();
+        else
+            $banks = Bank::all();
+
 
         return ResponseFormatter::success($banks, 'Bank list');
     }
@@ -129,6 +134,30 @@ class UserBankController extends Controller
 
         return ResponseFormatter::success($bank, 'Bank created success');
     }
+
+    function update_bank(AdminRequest $request)
+    {
+        $this->validate($request, [
+            'bsb' => 'nullable',
+            'swift' => 'nullable',
+            'bank_name' => 'nullable',
+            'disabled' => 'boolean',
+            'bank_id' => 'required|exists:banks,id'
+        ]);
+
+        $bank = Bank::withTrashed()->find($request->bank_id);
+
+        $bank->update(array_filter($request->all()));
+
+        if ($request->disabled)
+            $bank->delete();
+        else
+            $bank->restore();
+
+
+        return ResponseFormatter::success($bank, 'Bank updated success');
+    }
+
 
     public function showSystemBankPage()
     {

@@ -1,96 +1,123 @@
-@extends('layouts.master')
-@section('styles')
-<style>
-    .voucher_description{
-        width: 150px !important;
-        border:1px solid red;
-    }
-</style>
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Incomplete Registration</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Incomplete Registration</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+<!DOCTYPE html>
+<html lang="en">
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="col-xl-12">
-                                <div class="card p-0">
-                                    <div class="card-body p-4">
-                                        <div class="row align-items-center">
-                                            <h5 class="m-0 font-weight-bold text-primary">App Grid</h5>
-                                            {{-- <button type="submit" class="btn-fill btn" id='update_app_grid'
-                                                style="float:right; margin-top: -20px;">Update</button> --}}
-                                                <div class="e-table px-5 pb-5 pd-12">
-                                                <div class="table-responsive table-lg">
-                                                    <table class="table border-top table-bordered mb-0 text-nowrap" id="dataTable" style="width:100%;">
-                                                        <thead class="border-top">
-                                                            <tr>
-                                                                <th class="border-bottom-0">Date</th>
-                                                                <th class="border-bottom-0">Label</th>
-                                                                <th class="border-bottom-0">Logo</th>
-                                                                <th class="border-bottom-0">Type</th>
-                                                                <th class="border-bottom-0">Redirect To</th>
-                                                                <th class="border-bottom-0">Grid No</th>
-                                                                <th class="border-bottom-0">Grid For</th>
-                                                                <th class="border-bottom-0 ">App Grid For</th>
-                                                                <th class="border-bottom-0">Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody></tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                <!-- /.container-fluid -->
-                                <div id='response'></div>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">App Grid</h5>
+                            {{-- <button type="submit" class="btn-fill btn" id='update_app_grid'
+                                style="float:right; margin-top: -20px;">Update</button> --}}
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Grid No</th>
+                                            <th class="text-center">Label</th>
+                                            <th class="text-center">Logo</th>
+                                            <th class="text-center">Type</th>
+                                            <th class="text-center">Redirect To</th>
+                                            <th class="text-center">App Grid For</th>
+                                            <th class="text-center">Grid For</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <!-- ROW CLOSED -->
                     </div>
-                    <!-- CONTAINER CLOSED -->
-   <!-- Modal  -->
-<div class="modal fade" id="update_app_grid_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+            <div id="loader"></div>
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
+
+    {{-- update app grid --}}
+    <div class="modal fade" id="update_app_grid_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Update App Grid</h5>
-                    <button class="btn-close" type="button" data-dismiss="modal" aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
                 <div class="modal-body">
+
                     <form id="app_Grid">
+
                         <div class="row">
                             <div class="col-md-6" style="margin:0 auto; display:block;">
                                 <input type="hidden" name="id" value="id" id="appGridId">
                                 <input type="hidden" name="redirect_to" value="redirect_to" id="redirect_to">
+
                                 <div class="form-group">
                                     <label>Grid No</label>
                                     <div class="input-group">
-                                        <select name="grid_no" id="grid_no" class="select2 form-control custom-select"
+                                        <input type="text" name="grid_no" class="form-control" id="grid_no"
                                             required>
-                                            <option value="1" selected="selected">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
-                                            <option value="6">6</option>
-                                            <option value="7">7</option>
-                                            <option value="8">8</option>
-                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -106,8 +133,11 @@
                                     <div class="input-group">
                                         <input type="text" name="logo_url" class="form-control" id="logo_url"
                                             required>
-
+                                        <div title="Upload Image" id="UploadImageUrl">
+                                            <i class="fa fa-upload" style="padding: 5px;"></i>
+                                        </div>
                                     </div>
+
                                 </div>
                                 <div class="form-group">
                                     <label>Type</label>
@@ -127,8 +157,10 @@
                                             class="select2 form-control custom-select" required>
                                             <option value="" selected="selected">Select Biller / Biller Category
                                             </option>
-                                            <option value="App/Models/Biller">Biller</option>
-                                            <option value="App/Models/BillerCategory">Biller Category</option>
+                                            <option value="App\Models\Biller" data-selected-id="biller">Biller
+                                            </option>
+                                            <option value="App\Models\BillerCategory"
+                                                data-selected-id="biller_category">Biller Category</option>
                                         </select>
                                     </div>
                                 </div>
@@ -137,25 +169,78 @@
                                         <label>Biller</label>
                                         <select name="unique_id" id="unique_id"
                                             class="select2 form-control custom-select" required>
+
                                         </select>
                                     </div>
                                 </div>
+
                             </div>
+
+
                         </div>
-                        <div class="px-4 py-4 text-center">
+                        <div style="text-align:center; padding:5%">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                                 data-biller-id="" style="font-weight:500;">Update</button>
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
+
                         <div id='response'></div>
+
                     </form>
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
     </div>
-@endsection
-@section('scripts')
-<script type="text/javascript">
+    {{-- upload image on aws --}}
+    <div class="modal fade" id="add_image_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">Add Image</h4>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
+                </div>
+                <div class="modal-body">
+                    <form name='addImage' id='addImage' enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
+                                    <label>Upload Image</label>
+                                    <div class="input-group">
+                                        <input type="file" name="image" class="form-control" id="image"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                        </div>
+                        <div style="text-align:center">
+                            <button type="submit" class="btn btn-primary btn-rounded btn-fw"
+                                id='image_submit_button' data-user-id="" style="font-weight:500;">Add</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+
+    <script type="text/javascript">
         $(document).ready(function() {
             $(".navbar-nav li").removeClass("active"); //this will remove the active class from  
             //previously active menu item 
@@ -171,14 +256,13 @@
                 "serverSide": true,
                 "searching": false,
                 "ordering": false,
+                "bPaginate": false,
+                "bInfo": false,
                 "ajax": {
                     url: '{{ url('api/app-grid') }}',
                     data: function(d) {
                         d.request_origin = 'web'
-                    },
-                    // success:function(a){
-                    //         console.log(a);
-                    //     }
+                    }
                 },
 
                 columnDefs: [{
@@ -191,21 +275,17 @@
 
                 }],
                 "columns": [{
-                        data: 'created_at',
-                        className: "created_at",
-                        render: function(data, type, row, meta) {
-                            return moment.utc(data).local().format('DD/MM/YYYY HH:mm a');
-                        }
+                        data: 'grid_no',
+                        className: 'grid_no'
                     },
                     {
                         data: 'label',
                         className: 'label'
                     },
                     {
-                        data: 'logo_url',
-                        className: 'logo_url',
-                        render: function(data, type, row, meta) {
-                            return '<img src="'+data+'"></img>';
+                        "render": function(data, type, JsonResultRow, meta) {
+                            return '<img src="' + JsonResultRow.logo_url +
+                                '"height="75" width="75" alt="Biller Logo">';
                         }
                     },
                     {
@@ -217,16 +297,30 @@
                         className: 'redirect_to'
                     },
                     {
-                        data: 'grid_no',
-                        className: 'grid_no'
+                        data: 'app_grid_for',
+                        className: 'category_name',
+                        render: function(data, type, row, meta) {
+                            console.log(row.app_grid_for);
+                            if (row.app_grid_for != null) {
+                                if (row.app_grid_for.hasOwnProperty('category_name'))
+                                    return row.app_grid_for.category_name;
+                                else
+                                    return row.app_grid_for.biller_name;
+                            } else {
+                                return "-"
+                            }
+                        }
                     },
                     {
                         data: 'grid_for',
                         className: 'grid_for'
                     },
                     {
-                        data: 'app_grid_for.category_name',
-                        className: 'category_name'
+                        data: 'created_at',
+                        className: "created_at",
+                        render: function(data, type, row, meta) {
+                            return moment.utc(data).local().format('DD/MM/YYYY HH:mm a');
+                        }
                     }
 
                 ]
@@ -237,7 +331,7 @@
 
             $('#grid_for').on('change', function() {
 
-                if (this.value == 'App/Models/Biller') {
+                if ($(this).find(":selected").text() === "Biller") {
                     $("#redirect_option").show();
                     $.ajax({
                         url: 'api/biller',
@@ -279,6 +373,18 @@
                 }
             });
 
+            function convertFormToJSON(form) {
+                return $(form)
+                    .serializeArray()
+                    .reduce(function(json, {
+                        name,
+                        value
+                    }) {
+                        json[name] = value;
+                        return json;
+                    }, {});
+            }
+
             //Update AppGrid
             $("#dataTable").on('click', '.btn_app_grid', function() {
                 var AppGridId = $(this).data('appgridid');
@@ -291,6 +397,9 @@
                 var Type = $(this).closest('tr').find('.type').text();
                 var Grid_for = $(this).closest('tr').find('.grid_for').text();
                 var Grid_No = $(this).closest('tr').find('.grid_no').text();
+                var unique_id = $(this).closest('tr').find('.grid_no').text();
+
+
 
                 $('#appGridId').val(AppGridId);
                 $('#Label').val(label);
@@ -300,17 +409,85 @@
                 $('#grid_for').val(Grid_for);
                 $('#grid_no').val(Grid_No);
 
+
+                $("div.grid_for select").val(Grid_for);
+                $("div.type select").val(Type);
+                $("div.unique_id select").val(unique_id);
+
+
+
                 $('#update_app_grid_form').modal('show');
+
+
+            });
+            $('#UploadImageUrl').click(function() {
+                $('#add_image_form').modal('show');
+            });
+            $('#addImage').on('submit', function(e) {
+                e.preventDefault();
+                console.log("onclick of add button");
+
+                var formFields = new FormData(this);
+
+                $.ajax({
+                    url: 'api/image/upload',
+                    type: 'post',
+                    dataType: 'JSON',
+                    data: formFields,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        //alert(JSON.stringify(meta.message));
+                        console.log("ttttt");
+                        $('#add_image_form').modal('hide');
+                        $('#logo_url').val(data.file_name);
+                        console.log("ImgUrl: " + data.file_name);
+
+                    },
+                    error: function(data) {
+
+                        if (data.status === 422) {
+                            var errors = $.parseJSON(data.responseText);
+                            $.each(errors, function(key, value) {
+                                // console.log(key+ " " +value);
+                                $('#response').addClass(
+                                    "alert alert-danger");
+
+                                if ($.isPlainObject(value)) {
+                                    $.each(value, function(key, value) {
+                                        // console.log(key + " " +
+                                        //     value);
+                                        $('#response').show()
+                                            .append(value +
+                                                "<br/>");
+
+                                    });
+                                } else {
+                                    $('#response').show().append(value +
+                                        "<br/>"
+                                    ); //this is my div with messages
+                                }
+                            });
+                        }
+
+                    }
+
+
+
+                });
             });
             $('#app_Grid').on('submit', function(e) {
                 e.preventDefault();
                 spinner.show();
-                var formFields = $('#app_Grid').serialize();
+                // var formFields = $('#app_Grid').serialize();
+                var formFields = convertFormToJSON($('#app_Grid'));
                 $.ajax({
                     url: 'api/app-grid',
                     type: 'patch',
                     dataType: 'JSON',
-                    data: formFields,
+                    data: {
+                        app_grid: [formFields]
+                    },
                     success: function(data) {
                         //alert(JSON.stringify(meta.message));
                         console.log("ttttt");
@@ -369,10 +546,8 @@
                 });
             });
 
-
-
-
         });
     </script>
+</body>
 
-@endsection
+</html>

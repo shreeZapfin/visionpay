@@ -55,7 +55,7 @@
                                                                 class="select2 form-control custom-select">
                                                                 <option value="" selected="selected">Select Type
                                                                 </option>
-                                                                <option value="mobile">Mobile</option>
+                                                                {{-- <option value="mobile">Mobile</option> --}}
                                                                 <option value="email">Email</option>
                                                             </select>
                                                         </div>
@@ -66,7 +66,7 @@
                                                             <div class="input-group">
                                                                 <input type="text" name="mobile_no"
                                                                     class="form-control" id="mobile_no"
-                                                                    placeholder="Enter Mobile Number">
+                                                                    placeholder="Enter Mobile Number" readonly>
 
                                                             </div>
                                                         </div>
@@ -78,7 +78,7 @@
                                                                 <input type="email" name="email"
                                                                     class="form-control" id="email"
                                                                     aria-describedby="emailHelp"
-                                                                    placeholder="Enter Email Address">
+                                                                    placeholder="Enter Email Address" readonly>
 
                                                             </div>
                                                         </div>
@@ -187,6 +187,15 @@
         var spinner = $('#loader');
 
         $('#auth_type').on('change', function() {
+            $.ajax({
+                url: '{{ url('api/user') }}',
+                type: 'get',
+                success: function(data) {
+                    console.log("Mob: " + data.data.mobile_no);
+                    $('#mobile_no').val(data.data.mobile_no);
+                    $('#email').val(data.data.email);
+                }
+            });
             if (this.value == 'email') {
                 $("#receive_otp_option").show();
                 $("#recive_otp_on_mobile").hide();
@@ -205,8 +214,6 @@
         $('#send_otp').on('submit', function(e) {
             e.preventDefault();
             spinner.show();
-
-
 
             var MobileNo = $('#mobile_no').val();
             // console.log("MobileNo: " + MobileNo);

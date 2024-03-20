@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserType;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -27,7 +29,7 @@ class SearchUserRequest extends FormRequest
     {
         return [
             'search' => [Rule::requiredIf(function () {
-                if (Auth::user()->is_admin || $this->has('id'))
+                if (in_array(Auth::user()->user_type_id,[UserType::Staff,UserType::Admin]) || $this->has('id'))
                     return false;
                 return true;
             })],

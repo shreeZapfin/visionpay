@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\ResponseFormatter;
 use App\Models\AdminBankDetail;
 use Illuminate\Http\Request;
-use Twilio\Rest\Client;
 
 class AdminBankController extends Controller
 {
@@ -126,32 +125,5 @@ class AdminBankController extends Controller
     public function editBank(AdminBankDetail $adminBankDetail)
     {
         return view('AdminBank.update_bank_detail')->with('editBankDetails', $adminBankDetail);
-    }
-
-    public function testAPi(){
-        $sid = 'AC88bb91a88b6718d07622c2480021cd01';
-        $token = 'c59568d5f7691fdf86a31ba412e2c039';
-        $twilio = new Client($sid, $token);
-        // VA01118ef57415c78bd15c43c62025384c by vinay
-        //VA54d6b92148f7f8cd5c8cc37707b9f2ef by app
-        // $service = $twilio->verify->v2->services
-        //                             ->create("My First Verify Service");
-        // $verification = $twilio->verify->v2->services("VA54d6b92148f7f8cd5c8cc37707b9f2ef")
-        //                            ->verifications
-        //                            ->create("+918007113149", "sms");
-
-    
-        $verification_check = $twilio->verify->v2->services("VA54d6b92148f7f8cd5c8cc37707b9f2ef")
-        ->verificationChecks
-        ->create([
-                     "to" => "+918007113149",
-                     "code" => "072132"
-                 ]
-        );
-                     
-
-        echo'<pre>';
-        print($verification_check->status);    
-        dd("OK");    
     }
 }

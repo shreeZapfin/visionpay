@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: GameBoY
@@ -30,7 +31,6 @@ class TwilioOtpService
             $twilio->verify->v2->services($twilio_verify_sid)
                 ->verifications
                 ->create($countryCode . $mobileNo, "sms");
-
         } catch (\Exception $exception) {
             Log::error($exception);
             throw new ThirdPartyConnectionException();
@@ -43,7 +43,7 @@ class TwilioOtpService
 
         $countryCode = ($digits == 7) ? '+679' : '+91';
 
-        if (App::environment() != 'production' AND $otp == '101101')
+        if (App::environment() != 'production' and $otp == '101101')
             return true;
 
 
@@ -75,7 +75,6 @@ class TwilioOtpService
             $twilio->verify->v2->services($twilio_verify_sid)
                 ->verifications
                 ->create($email, "email");
-
         } catch (\Exception $exception) {
             Log::error($exception);
             throw new ThirdPartyConnectionException();
@@ -92,7 +91,8 @@ class TwilioOtpService
             $twilio = new Client($twilio_sid, $token);
             $verification = $twilio->verify->v2->services($twilio_verify_sid)
                 ->verificationChecks
-                ->create($otp,
+                ->create(
+                    $otp,
                     ["to" => $email]
                 );
 
@@ -103,8 +103,8 @@ class TwilioOtpService
 
             return false;
         } catch (\Exception $exception) {
+            Log::error($exception);
             throw new ThirdPartyConnectionException();
         }
-
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class PasswordChangeRequest extends FormRequest
 {
@@ -25,8 +26,18 @@ class PasswordChangeRequest extends FormRequest
     {
         return [
             'otp' => 'required|digits:6',
-            'password' => 'required|confirmed|min:8',
-            'mobile_no' => 'required|exists:users,mobile_no'
+            'password' => [
+                'required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+                'confirmed'
+            ],
+            'mobile_no' => 'required_without:email_id|exists:users,mobile_no',
+            'email_id' => 'required_without:mobile|exists:users,email'
         ];
     }
 }

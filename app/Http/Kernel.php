@@ -4,6 +4,8 @@ namespace App\Http;
 
 use App\Http\Middleware\BillerMiddleware;
 use App\Http\Middleware\CheckVoucherValidityMiddleware;
+use App\Http\Middleware\StoreApiEventMiddleware;
+use App\Http\Middleware\StoreApiRequestsMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -18,6 +20,7 @@ class Kernel extends HttpKernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
+        \Fruitcake\Cors\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
@@ -44,6 +47,7 @@ class Kernel extends HttpKernel
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            StoreApiRequestsMiddleware::class
         ],
     ];
 
@@ -68,5 +72,9 @@ class Kernel extends HttpKernel
         'admin_web' => \App\Http\Middleware\AdminMiddleware::class,
         'biller_web' => \App\Http\Middleware\BillerMiddleware::class,
         'customer_web' => \App\Http\Middleware\CustomerMiddleware::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'log_api_event' => StoreApiEventMiddleware::class,
     ];
 }

@@ -20,18 +20,20 @@ class BillerFilter extends ModelFilter
     function biller_name($name)
     {
         return $this->whereBeginsWith('biller_name', $name);
-
     }
 
     function biller_category_id($id)
     {
         return $this->where('biller_category_id', $id);
-
     }
 
     function is_active($boolean)
     {
-        return $this->where('is_active',$boolean);
+        return $this->where('is_active', $boolean);
     }
 
+    function user_id($id)
+    {
+        return $this->where('user_id', $id);
+    }
 }

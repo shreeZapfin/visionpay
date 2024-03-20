@@ -7,6 +7,7 @@ use App\Enums\UserType;
 use App\Enums\WalletTransactionType;
 use App\Exports\WalletTransactionExport;
 use App\Helpers\ResponseFormatter;
+use App\Helpers\Utils;
 use App\Http\Requests\AdminRequest;
 use App\Http\Requests\PayoutAgentCommissionRequest;
 use App\Http\Requests\WalletHistoryRequest;
@@ -154,12 +155,14 @@ class WalletTransactionController extends Controller
         return view('Reports.admin_wallet_history');
     }
 
-    public function refundWalletTransaction(WalletTransaction $wallettransaction)
+    public function refundWalletTransaction(WalletTransaction $wallettransaction,Request $request)
     {
-        $refundTxns = (new WalletTransactionService())->refund_wallet_txn($wallettransaction);
 
-        return ResponseFormatter::success($refundTxns, 'Refund success');
+        if (Utils::check_transaction_pin($request->transaction_pin)) {
+            $refundTxns = (new WalletTransactionService())->refund_wallet_txn($wallettransaction);
 
+            return ResponseFormatter::success($refundTxns, 'Refund success');
+        }
     }
 
 
@@ -173,42 +176,42 @@ class WalletTransactionController extends Controller
             $userId = $request->user_id;
 
 
-        $recentTUsers =
-            User::whereExists(function ($q) use ($userId) {
-                    $q->from('wallet_transactions', 'wt')
-                        ->leftJoin('wallet_transactions', function ($join) use ($userId) {
-                            $join->on('wt.transaction_id', '=', 'wallet_transactions.transaction_id')
-                                ->where('wt.debit_amount', '>', 0)
-                                ->where('wt.user_id', $userId);
-                        })
-                        ->where('wallet_transactions.user_id', '<>', $userId)
-                        ->whereColumn('users.id', 'wallet_transactions.user_id')
-                        ->orderBy('wallet_transactions.id','desc')
-                        ->limit(5)
-                        ->groupBy('wallet_transactions.user_id')
-                        ->select('wallet_transactions.user_id');
-                })->select('username','first_name','last_name','selfie_img_url','profile_pic_img_url','user_type_id','id')
-                ->whereNotIn('user_type_id',[UserType::AdminWithdrawal,UserType::Admin,UserType::AdminCommission])
-                ->with('biller:biller_name,biller_img_url,user_id');
+        $allUserTxnWithUserId = DB::table('wallet_transactions')
+            ->selectRaw('wt.user_id,max(wallet_transactions.id)')
+            ->join('wallet_transactions as wt', 'wt.transaction_id', 'wallet_transactions.transaction_id')
+            ->whereColumn('wt.user_id', '<>', 'wallet_transactions.user_id')
+            ->whereColumn('wt.transaction_type', 'wallet_transactions.transaction_type')
+            ->where('wallet_transactions.user_id', $userId)
+            ->where('wallet_transactions.debit_amount', '>', 0)
+            ->whereIn('wallet_transactions.transaction_type', [WalletTransactionType::WALLET_TRANSFER, WalletTransactionType::BILL_PAYMENT])
+            ->groupBy('wt.user_id')
+            ->havingRaw('max(wallet_transactions.id)')
+            ->orderByRaw('max(wallet_transactions.id) DESC')
+            ->limit(5);
 
 
-        $mostTusers =     User::whereExists(function ($q) use ($userId) {
-                $q->from('wallet_transactions', 'wt')
-                    ->leftJoin('wallet_transactions', function ($join) use ($userId) {
-                        $join->on('wt.transaction_id', '=', 'wallet_transactions.transaction_id')
-                            ->where('wt.debit_amount', '>', 0)
-                            ->where('wt.user_id', $userId);
-                    })
-                    ->where('wallet_transactions.user_id', '<>', $userId)
-                    ->whereColumn('users.id', 'wallet_transactions.user_id')
-                    ->groupBy('wallet_transactions.user_id')
-                    ->orderByRaw('count(wallet_transactions.id) desc')
-                    ->limit(5)
-                    ->selectRaw('wallet_transactions.user_id,count(wallet_transactions.transaction_id)');
-            })->select('username','first_name','last_name','selfie_img_url','profile_pic_img_url','user_type_id','id')
-            ->whereNotIn('user_type_id',[UserType::AdminWithdrawal,UserType::Admin,UserType::AdminCommission])
-            ->with('biller:biller_name,biller_img_url,user_id');
+        $recentTUsers = User::
+        joinSub($allUserTxnWithUserId, 'recent_users', function ($join) {
+            $join->on('users.id', '=', 'recent_users.user_id');
+        });
 
+
+        $allUserTxnWithUserId = DB::table('wallet_transactions')
+            ->selectRaw('wt.user_id,count(wallet_transactions.id) as no_of_txn')
+            ->join('wallet_transactions as wt', 'wt.transaction_id', 'wallet_transactions.transaction_id')
+            ->whereColumn('wt.user_id', '<>', 'wallet_transactions.user_id')
+            ->whereColumn('wt.transaction_type', 'wallet_transactions.transaction_type')
+            ->where('wallet_transactions.user_id', $userId)
+            ->where('wallet_transactions.debit_amount', '>', 0)
+            ->whereIn('wallet_transactions.transaction_type', [WalletTransactionType::WALLET_TRANSFER, WalletTransactionType::BILL_PAYMENT])
+            ->groupBy('wt.user_id')
+            ->orderByRaw('no_of_txn DESC')
+            ->limit(5);
+
+        $mostTusers = User::
+        joinSub($allUserTxnWithUserId, 'most_txn_users', function ($join) {
+            $join->on('users.id', '=', 'most_txn_users.user_id');
+        });
 
 
         return ResponseFormatter::success([

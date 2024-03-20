@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\UserType;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 use Closure;
@@ -20,7 +21,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next)
     {
 
-        if (Auth::user()->user_type_id == UserType::Admin) {
+        if (in_array(Auth::user()->user_type_id,[UserType::Staff,UserType::Admin])) {
             return $next($request);
         } else {
             return redirect('/login')

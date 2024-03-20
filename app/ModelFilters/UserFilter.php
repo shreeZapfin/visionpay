@@ -52,6 +52,10 @@ class UserFilter extends ModelFilter
 
         if ($userType == UserType::Agent)
             $query->with('agent.agentWallets');
+        if ($userType == UserType::Staff)
+            $query->with('permissions');
+
+        return $query;
     }
 
     public function is_pending_verification($boolean)
@@ -122,4 +126,70 @@ class UserFilter extends ModelFilter
     {
         return $this->where('master_account_user_id', $id);
     }
+
+    function user_having_agent_access($boolean)
+    {
+        if ($boolean)
+            return $this->whereHas('user_permission', function ($filter) {
+                $filter->where('agent_access', 1);
+            });
+        return $this->whereHas('user_permission', function ($filter) {
+            $filter->where('agent_access', 0);
+        });
+
+    }
+
+    function users_have_transacted_between($dates)
+    {
+        $dates[1] = Carbon::parse($dates[1])->endOfDay();
+        return $this->whereHas('walletTransactions', function ($filter) use ($dates) {
+            $filter->whereBetween('created_at', $dates);
+        });
+
+    }
+
+    function users_have_not_transacted_between($dates)
+    {
+        $dates[1] = Carbon::parse($dates[1])->endOfDay();
+        return $this->whereDoesntHave('walletTransactions', function ($filter) use ($dates) {
+            $filter->whereBetween('created_at', $dates);
+        });
+
+    }
+
+    function agents_have_transacted_between($dates)
+    {
+        $dates[1] = Carbon::parse($dates[1])->endOfDay();
+
+        return $this->whereHas('agent', function ($filter) use ($dates) {
+            $filter->whereHas('agentWallets', function ($filter) use ($dates) {
+                $filter->whereHas('agentWalletTransactions', function ($filter) use ($dates) {
+                    $filter->whereBetween('created_at', $dates);
+                });
+            });
+        })->where('user_type_id', UserType::Agent);
+
+
+    }
+
+    function agents_have_not_transacted_between($dates)
+    {
+        $dates[1] = Carbon::parse($dates[1])->endOfDay();
+
+        return $this->whereDoesntHave('agent', function ($filter) use ($dates) {
+            $filter->whereHas('agentWallets', function ($filter) use ($dates) {
+                $filter->whereHas('agentWalletTransactions', function ($filter) use ($dates) {
+                    $filter->whereBetween('created_at', $dates);
+                });
+            });
+        })->where('user_type_id', UserType::Agent);
+
+    }
+
+    function sort_by_filter($column)
+    {
+        return $this->orderBy($column['column'], $column['order']);
+    }
+
+
 }

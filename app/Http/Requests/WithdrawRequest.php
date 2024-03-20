@@ -16,7 +16,7 @@ class WithdrawRequest extends FormRequest
      */
     public function authorize()
     {
-        if(Auth::user()->user_type_id == UserType::Agent)
+        if(Auth::user()->user_type_id == UserType::Agent ||  Auth::user()->hasTokenAbilityTo('agent-access'))
             return true;
 
         return false;

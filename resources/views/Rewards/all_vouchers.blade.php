@@ -1,159 +1,224 @@
-@extends('layouts.master')
-@section('styles')
-<style>
-    .voucher_description{
-        width: 150px !important;
-        border:1px solid red;
-    }
-</style>
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Incomplete Registration</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Incomplete Registration</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+<!DOCTYPE html>
+<html lang="en">
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="col-xl-12">
-                                <div class="card p-0">
-                                    <div class="card-body p-4">
-                                        <div class="row align-items-center">
-                                            <form name='filter_search' id='filter_search' style="margin-top: 20px;">
-                                                    <div class="input-group">
-                                                        <div class="form-group col-sm">
-                                                            <label>Voucher For</label>
-                                                            <select name="voucher_for" id="voucher_for"
-                                                                class="select2 form-control custom-select">
-                                                                <option value="" selected="selected">Select Vocher For</option>
-                                                                <option value="MERCHANT_PAYMENT">Merchant Payment</option>
-                                                                <option value="FUND_REQUEST">Fund Request</option>
-                                                                <option value="BILL_PAYMENT">Bill Payment</option>
-                                                                <option value="DEPOSIT">Deposit</option>
-                                                            </select>
-                                                        </div> &nbsp;&nbsp;
-                                                        <div class="form-group col-sm">
-                                                        <label>Status</label>
-                                                            <select name="is_active" id="is_active" class="select2 form-control custom-select">
-                                                                <option value="" selected="selected">Select Status</option>
-                                                                <option value="true">Active</option>
-                                                                <option value="false">Expired</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="form-group col-sm d-flex report_btns" style="padding-top: 29px !important;">
-                                                                    <button type="button" name="filter" id="filter"
-                                                                        class="btn btn-info btn-sm filter">Filter
-                                                                    </button>
-                                                            </div>
-                                                    </div>
-                                                </form>
-                                            <div class="e-table px-5 pb-5 pd-12">
-                                                <div class="table-responsive table-lg">
-                                                    <table class="table border-top table-bordered mb-0 text-nowrap allvouchers_dtable" id="dataTable" style="width:100%;">
-                                                        <thead class="border-top">
-                                                            <tr>
-                                                                <th class="border-bottom-0">Date</th>
-                                                                <th class="border-bottom-0">Promotion Name</th>
-                                                                <th class="border-bottom-0">Voucher For</th>
-                                                                <th class="border-bottom-0">Expiry Date</th>
-                                                                <th class="border-bottom-0">Min Transaction<br>Amount</th>
-                                                                <th class="border-bottom-0">Cashback<br>Amount</th>
-                                                                <th class="border-bottom-0">Voucher<br>Description</th>
-                                                                <th class="border-bottom-0 ">Code</th>
-                                                                <th class="border-bottom-0">Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody></tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Vouchers</h5>
+                        </div>
+                        <form name='filter_search' id='filter_search' style="margin-top: 20px;">
+                            <div class="col-12 col-sm-6 col-md-6 input-group input-daterange">
+                                <div class="form-group">
+                                    <label>Voucher For</label>
+                                    <select name="voucher_for" id="voucher_for"
+                                        class="select2 form-control custom-select">
+                                        <option value="" selected="selected">Select Vocher For</option>
+                                        <option value="MERCHANT_PAYMENT">Merchant Payment</option>
+                                        <option value="FUND_REQUEST">Fund Request</option>
+                                        <option value="BILL_PAYMENT">Bill Payment</option>
+                                        <option value="DEPOSIT">Deposit</option>
+                                    </select>
                                 </div>
-                                <!-- /.container-fluid -->
-                                <div id='response'></div>
+                                &nbsp;&nbsp;
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <select name="is_active" id="is_active" class="select2 form-control custom-select">
+                                        <option value="" selected="selected">Select Status</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Expired</option>
+                                    </select>
+                                </div>
+                                {{-- &nbsp;&nbsp; --}}
+                                <button type="button" name="filter" id="filter" class="btn btn-info btn-sm"
+                                    style="text-align: center; height : 40px; width: 80px;">Filter</button>
+                            </div>
+                        </form>
+
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <div id='response'></div>
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Promotion Name</th>
+                                            <th class="text-center">Voucher For</th>
+                                            <th class="text-center">Expiry Date</th>
+                                            <th class="text-center">Min Transaction Amount</th>
+                                            <th class="text-center">Cashback Amount</th>
+                                            <th class="text-center">Voucher Description</th>
+                                            <th class="text-center">Code</th>
+                                            <th clas="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <!-- ROW CLOSED -->
+
+
+
                     </div>
-                    <!-- CONTAINER CLOSED -->
-   
-                        <!-- Update Promotion Modal-->
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
+
+
+
+    <!-- Update Promotion Modal-->
     <div class="modal fade" id="update_promotion_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit bank details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='updateVoucher' id='updateVoucher'>
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Promotion Name</label>
+                                    <div class="input-group">
                                         <input type="text" name="promotion_name" class="form-control"
                                             id="promotion_name" required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Expiry Date</label>
+                                    <div class="input-group">
                                         <input type="date" name="expiry_date" class="form-control"
                                             id="expiry_date" required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Min Transaction Amount</label>
+                                    <div class="input-group">
                                         <input type="text" name="min_txn_amount" class="form-control"
                                             id="min_txn_amount" required>
+
+                                    </div>
                                 </div>
 
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Cashback Amount</label>
+                                    <div class="input-group">
                                         <input type="text" name="cashback_amount" class="form-control"
                                             id="cashback_amount" required>
+
+                                    </div>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group">
                                     <label>Voucher Description</label>
+                                    <div class="input-group">
                                         <input type="text" name="voucher_description" class="form-control"
                                             id="voucher_description" required>
+                                    </div>
                                 </div>
-                                {{-- <div class="col-xl-12">
+                                {{-- <div class="form-group">
                                     <label>Status</label>
                                     <select name="is_active" id="is_active" class="select2 form-control custom-select">
                                         <option value=true selected="selected">Active</option>
                                         <option value=false>Expired</option>
                                     </select>
                                 </div> --}}
+                            </div>
+
+                            <br><br>
+
                         </div>
-                        <div id="response" class="px-4 py-4 text-center">
+                        <div id="response" style="text-align:center">
                             <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
                                 data-voucher-id="" style="font-weight:500;">Update</button>
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
     </div>
 
-
- <!-- Transaction More Details Modal-->
- <div class="modal fade" id="more_details_form" tabindex="-1" role="dialog"
+    <!-- Transaction More Details Modal-->
+    <div class="modal fade" id="more_details_form" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Voucher Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
                 <div class="modal-body">
                     <form name='MoreDetails' id='MoreDetails'>
@@ -220,17 +285,24 @@
                             </div>
 
                         </div>
-                        <div class="px-4 py-4 text-center">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <div style="text-align:center; padding:5%">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
     </div>
-@endsection
-@section('scripts')
-<script type="text/javascript">
+
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+
+    <script type="text/javascript">
         $(document).ready(function() {
             $(".navbar-nav li").removeClass("active"); //this will remove the active class from  
             //previously active menu item 
@@ -266,22 +338,22 @@
                                 return '<td class="text-center"><button title="Disable Voucher" data-promotionid= "' +
                                     row
                                     .id +
-                                    '"  class="btn disable_voucher btn-block btn btn-secondary">Disable </button><button data-voucherid= "' +
+                                    '"  class="btn disable_voucher btn-block" style="background-color: rgb(95,158,160); color: rgb(255,255,255); width: 80px;" >Disable </button><button data-voucherid= "' +
                                     row
                                     .id +
-                                    '"  class="update_promotion btn-fill-approve btn btn-block btn btn-primary" style="width: 80px;" >Update</button><a class="btn btn-default mt-2"  title="View More details" href="{{ url('voucher-detail') }}/' +
+                                    '"  class="update_promotion btn-fill-approve btn btn-block" style="width: 80px;" >Update</button><a title="View More details" href="{{ url('voucher-detail') }}/' +
                                     row
                                     .id +
-                                    '" " style="width: 80px; background:#BD31B8; color: rgb(255,255,255);">View</a></td>';
+                                    '" style="width: 80px; background:#BD31B8; color: rgb(255,255,255); paddind:2%;">View</a></td>';
 
                             } else {
                                 return '<td class="text-center"><button title="Enable Voucher" data-promotionid= "' +
                                     row
                                     .id +
-                                    '"  class="btn enable_voucher btn-fill-approve btn-block btn btn-success">Enable</button><button data-voucherid= "' +
+                                    '"  class="btn enable_voucher btn-fill-approve btn-block" style="background-color: rgb(0,128,0); width: 80px;" >Enable</button><button data-voucherid= "' +
                                     row
                                     .id +
-                                    '"  class="update_promotion btn-fill-approve btn btn-block btn btn-primary" style="width: 80px;" >Update</button><a class="btn btn-default mt-2"  title="View More details" href="{{ url('voucher-detail') }}/' +
+                                    '"  class="update_promotion btn-fill-approve btn btn-block" style="width: 80px;" >Update</button><a title="View More details" href="{{ url('voucher-detail') }}/' +
                                     row
                                     .id +
                                     '" style="width: 80px; background:#BD31B8; color: rgb(255,255,255);">View</a></td>';
@@ -674,6 +746,6 @@
 
         });
     </script>
+</body>
 
-
-@endsection
+</html>

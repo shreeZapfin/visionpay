@@ -7,6 +7,7 @@ use App\Events\ComplaintMessageCreatedEvent;
 use App\Helpers\ResponseFormatter;
 use App\Http\Requests\AdminRequest;
 use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\ResolveComplaintRequest;
 use App\Models\Complaint;
 use App\Models\ComplaintMessage;
 use App\Models\ComplaintType;
@@ -25,7 +26,10 @@ class ComplaintController extends Controller
      */
     public function index(Request $request)
     {
-        $complaints = Complaint::with('walletTransaction.transaction', 'complaintType')->byUser(Auth::user())->filter($request->all());
+        $complaints = Complaint::with('walletTransaction.transaction', 'complaintType')
+            ->byUser(Auth::user())
+            ->filter($request->all())
+            ->orderBy('id', 'desc');
 
         if ($request->request_origin == 'web')
             return datatables($complaints)->toJson();
@@ -41,10 +45,14 @@ class ComplaintController extends Controller
      */
     public function store(CustomerRequest $request)
     {
+
+        $userId = ($request->user_id) ? $request->user_id : Auth::user()->id;
+
         $this->validate($request, [
             'complaint_type_id' => 'required',
-            'transaction_id' => 'nullable|unique:complaints,transaction_id|exists:wallet_transactions,transaction_id,user_id,' . Auth::user()->id,
+            'transaction_id' => 'nullable|unique:complaints,transaction_id',
             'user_complaint_description' => 'required',
+            'user_id' => 'nullable|exists:users,id'
         ]);
 
         if ($request->transaction_id == null) {
@@ -56,17 +64,18 @@ class ComplaintController extends Controller
                 throw ValidationException::withMessages(['transaction_id' => 'Transaction id is required when complaint type id is not General complaint !']);
         }
 
+
         $complaint = Complaint::create([
             'complaint_type_id' => $request->complaint_type_id,
             'transaction_id' => $request->transaction_id,
             'user_complaint_description' => $request->user_complaint_description,
             'complaint_status' => 'PENDING',
-            'user_id' => Auth::user()->id
+            'user_id' => $userId
         ]);
 
         ComplaintMessage::create([
             'complaint_id' => $complaint->id,
-            'message_from_user_id' => Auth::user()->id,
+            'message_from_user_id' =>  $userId,
             'message_to_user_id' => User::where('user_type_id', UserType::Admin)->first()->id,
             'message' => $request->user_complaint_description
         ]);
@@ -105,11 +114,12 @@ class ComplaintController extends Controller
      * @param  \App\Models\Complaint $complaint
      * @return \Illuminate\Http\Response
      */
-    public function resolveComplaint(AdminRequest $request, Complaint $complaint)
+    public function resolveComplaint(ResolveComplaintRequest $request, Complaint $complaint)
     {
         $complaint->complaint_status = 'RESOLVED';
         $complaint->admin_resolution_description = $request->resolution_description;
         $complaint->resolved_at = now();
+        $complaint->resolved_by = Auth::user()->id;
         $complaint->save();
 
         return ResponseFormatter::success($complaint, 'Complaint resolved success');

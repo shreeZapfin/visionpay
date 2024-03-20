@@ -11,6 +11,7 @@
 
     <title>Pacpay Admin Panel</title>
 
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
 
 </head>
 
@@ -159,6 +160,8 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
 
 
     <script type="text/javascript">

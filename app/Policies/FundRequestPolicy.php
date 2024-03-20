@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Enums\Permissions;
+use App\Helpers\UserType;
 use App\Models\FundRequest;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -53,8 +55,13 @@ class FundRequestPolicy
      */
     public function update(User $user, FundRequest $fundrequest)
     {
-        if ($fundrequest->sender_user_id == $user->id)
+        if ($fundrequest->sender_user_id == $user->id || $fundrequest->requester_user_id == $user->id) #Accepting or rejecting should be done who sends the funds only or who has requested
             return true;
+        if ($fundrequest->is_wallet_refill)  #Request for deposit from admin
+            if ($user->user_type_id == UserType::Staff)
+                if ($user->hasPermissionTo(Permissions::MANAGE_USER_WALLET))
+                    return true;
+
         return false;
 
     }

@@ -28,7 +28,7 @@ class AppGridController extends Controller
         $this->validate($request, [
             'app_grid.*.grid_no' => 'in:1,2,3,4,5,6,7,8|distinct',
             'app_grid.*.type' => 'nullable|in:singular,category',
-            'app_grid.*.grid_for' => 'nullable|in:App/Models/Biller,App/Models/BillerCategory'  #Add whenever want to add more table relations in grid
+            'app_grid.*.grid_for' => 'nullable|in:App\Models\Biller,App\Models\BillerCategory'  #Add whenever want to add more table relations in grid
         ]);
 
 
@@ -37,6 +37,9 @@ class AppGridController extends Controller
         foreach ($grid as $item) {
             AppGrid::where('id', $item['id'])->update($item);
         }
+
+
+        return ResponseFormatter::success([],'App grid updated succesfully');
     }
 
     public function showAppGridPage()

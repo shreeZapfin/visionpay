@@ -1,108 +1,146 @@
-@extends('layouts.master')
-@section('styles')
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" rel="stylesheet" />
+
     {{-- Date Picker --}}
-        <link rel="stylesheet"
+    <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
 
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.bootstrap5.min.css">
 
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Wallet History</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Wallet History</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+</head>
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="tab-content mb-5">
-                                <div class="tab-pane active" id="tab-11">
-                                    <div class="card p-0">
-                                        <div class="card-body p-4">
-                                            <div class="row align-items-center justify-content-end">
-                                                    <form name='filter_search' id='filter_search' style="margin-top: 20px;">
-                                                            <div class="input-group input-daterange">
-                                                                <div class="form-group col-sm" style="padding-top: 29px !important;">
-                                                                    <input type="text" name="from_date" id="from_date"
-                                                                         class="form-control"
-                                                                        placeholder="From Date" />
-                                                                </div>&nbsp;&nbsp;
-                                                                <div class="input-group-addon" style="padding-top: 29px !important;">to</div> &nbsp;&nbsp;
-                                                                <div class="form-group col-sm" style="padding-top: 29px !important;">
-                                                                    <input type="text" name="to_date" id="to_date"
-                                                                         class="form-control" placeholder="To Date" />
-                                                                </div>
-                                                                <div class="form-group col-sm d-flex report_btns" style="padding-top: 29px !important;">
-                                                                    <button type="button" name="filter" id="filter"
-                                                                        class="btn btn-info btn-sm filter">Filter
-                                                                    </button>
-                                                                    &nbsp;&nbsp;
-                                                                    <button type="button" name="export" id="export"
-                                                                        class="btn btn-success btn-block">Export All
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                        <div class="admin_btns d-flex mt-3">
-                                                        <a href="{{ asset('admin-commission') }}" class="btn btn-primary text-center">Admin Commission</a>
-                                                        <a href="{{ asset('admin-withdrawal') }}" class="btn btn-secondary">Admin Withdrawal</a>
-                                                        </div>
-                                                <div class="e-table px-5 pb-5 pd-12">
-                                                    <div class="table-responsive table-lg">
-                                                        <table class="table border-top table-bordered mb-0 text-nowrap incomplete_registration" id="dataTable" 
-                                                        style="display: block !important; overflow-x: auto !important;  width: 100% !important;">
-                                                            <thead class="border-top">
-                                                                <tr>
-                                                                    <th class="border-bottom-0">Date</th>
-                                                                    <th class="border-bottom-0">Opening Balance</th>
-                                                                    <th class="border-bottom-0">Closing Balance</th>
-                                                                    <th class="border-bottom-0">Credit Amount</th>
-                                                                    <th class="border-bottom-0">Debit Amount</th>
-                                                                    <th class="border-bottom-0">Transaction Id</th>
-                                                                    <th class="border-bottom-0">Transaction Type</th>
-                                                                    <th class="border-bottom-0">Description</th>
-                                                                    <th class="border-bottom-0">More Details</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody></tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Admin Wallet History</h5>
+                            <a href="{{ asset('admin-commission') }}" class="btn-fill btn"
+                                style="float:right; margin-top: -20px;">Admin Commission</a>
+                            <a href="{{ asset('admin-withdrawal') }}" class="btn-fill btn"
+                                style="float:right; margin-top: -20px; background-color: #b24ac7;">Admin Withdrawal</a>
+                            <br>
+                            <form name='filterdate' id='filterdate'>
+                                <div class="input-group input-daterange">
+                                    <div class="form-group col-sm">
+                                        <input type="text" name="from_date" id="from_date" readonly
+                                            class="form-control" placeholder="Start Date" />
+                                    </div>&nbsp;&nbsp;
+                                    <div class="input-group-addon">to</div> &nbsp;&nbsp;
+                                    <div class="form-group col-sm">
+                                        <input type="text" name="to_date" id="to_date" readonly
+                                            class="form-control" placeholder="To Date" />
                                     </div>
+                                    <div class="form-group col-sm">
+                                        <button type="button" name="filter" id="filter" class="btn btn-info btn-sm"
+                                            style="text-align: center; height : 40px; width: 100px;">Filter</button>
+                                        &nbsp;&nbsp;
+                                        <button type="button" name="export" id="export" class="btn btn-block"
+                                            style="text-align: center;height : 40px; width: 100px; background:	#006400; color: rgb(255,255,255);">Export
+                                            ALL</button>
+                                    </div>
+                            </form>
+
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%"
+                                        style="display: block !important; overflow-x: auto !important;  width: 100% !important;"
+                                        cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Date</th>
+                                                <th class="text-center">Opening Balance</th>
+                                                <th class="text-center">Closing Balance</th>
+                                                <th class="text-center">Credit Amount</th>
+                                                <th class="text-center">Debit Amount</th><br>
+                                                <th class="text-center">Transaction Id</th>
+                                                <th class="text-center">Transaction Type</th>
+                                                <th class="text-center">Description</th>
+                                                <th class="text-center">More Details</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <!-- /.container-fluid -->
-                                <div id='response'></div>
                             </div>
                         </div>
-                        <!-- ROW CLOSED -->
                     </div>
-                    <!-- CONTAINER CLOSED -->
+                    <!-- /.container-fluid -->
+                </div>
+                <!-- End of Main Content -->
 
- <!-- Transaction More Details Modal-->
- <div class="modal fade" id="more_details_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Pacpay 2021</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+            </div>
+            <!-- End of Content Wrapper -->
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+            <i class="fas fa-angle-up"></i> </a>
+
+        <!-- Transaction More Details Modal-->
+        <div class="modal fade" id="more_details_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Transaction Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span> </button>
                     </div>
-                    <div class="modal-body px-4">
+                    <div class="modal-body">
                         <form name='MoreDetails' id='MoreDetails'>
-                            <div class="row gy-3">
+                            <div class="row">
                                 <div style="margin:5%;">
                                     <table class="table table-bordered" cellspacing="0">
                                         <tr>
@@ -174,22 +212,20 @@
                 </div>
             </div>
         </div>
-@endsection
-@section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
-	
-    <!-- Datatables Cdn -->
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-    {{-- Date Picker --}}
+
+
+        <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+        <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+        <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+
+        {{-- Date Picker --}}
         <script src="{{ asset('vendor/moment/moment.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
 
@@ -203,7 +239,8 @@
                 $('.input-daterange').datepicker({
                     todayBtn: 'linked',
                     format: 'yyyy-mm-dd',
-                    autoclose: true
+                    autoclose: true,
+                    orientation: "bottom left"
                 });
 
 
@@ -434,4 +471,6 @@
 
             });
         </script>
-    @endsection
+</body>
+
+</html>

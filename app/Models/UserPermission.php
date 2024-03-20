@@ -27,7 +27,7 @@ class UserPermission extends Model
     /**
      * @var array
      */
-    protected $fillable = ['created_at', 'updated_at', 'fund_request', 'bank_withdrawal', 'bill_payment', 'deposit'];
+    protected $fillable = ['created_at', 'updated_at', 'fund_request', 'bank_withdrawal', 'bill_payment', 'deposit','agent_access'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne

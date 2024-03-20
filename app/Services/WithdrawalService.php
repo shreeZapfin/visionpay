@@ -226,12 +226,12 @@ class WithdrawalService
         return false;
     }
 
-    function checkUserAvailableBalance($userId, $amount, $wdType)
+    function checkUserAvailableBalance($userId, $amount, $wdType = null)
     {
         $user = User::find($userId);
         $walletService = (new WalletServiceFactory())->getWalletServiceFactory($user);
 
-        $withdrawalTxnAmount = $amount + $this->getWithdrawalCharge($wdType, $amount);
+        $withdrawalTxnAmount = $amount + (($wdType) ? $this->getWithdrawalCharge($wdType, $amount) : 0);
 
         if (!$walletService->is_wallet_balance_sufficient($withdrawalTxnAmount))
             throw new InsufficientWithdrawalableBalanceException('Insufficient withdrawable user balance ! Available user balance : ' . $walletService->get_wallet_balance() . ' | Transaction amount = ' . $withdrawalTxnAmount);
@@ -296,41 +296,42 @@ class WithdrawalService
         return $withdrawal;
     }
 
-    function adminWithdrawal(User $user , $amount,$remark)
+    function adminWithdrawal(User $user, $amount, $remark)
     {
-        $withdrawal = DB::transaction(function () use ($user, $amount,$remark) {
-            $withdrawal = (new WithdrawalService())->createWithdrawal([
-                'agent_id' => null,
-                'user_id' => $user->id,
-                'amount' => $amount,
-                'withdrawal_id' => 'WT' . Utils::transaction_id_generator(),
-                'expires_at' => null,
-                'bank_details' => null,
-                'status' => WithdrawalStatus::ADMIN_WITHDRAWAL,
-                'is_bank_withdrawal' => false,
-                'remark' => $remark
-            ]);
+        if ((new WithdrawalService())->checkUserAvailableBalance($user->id, $amount)) {
+            $withdrawal = DB::transaction(function () use ($user, $amount, $remark) {
+                $withdrawal = (new WithdrawalService())->createWithdrawal([
+                    'agent_id' => null,
+                    'user_id' => $user->id,
+                    'amount' => $amount,
+                    'withdrawal_id' => 'WT' . Utils::transaction_id_generator(),
+                    'expires_at' => null,
+                    'bank_details' => null,
+                    'status' => WithdrawalStatus::ADMIN_WITHDRAWAL,
+                    'is_bank_withdrawal' => false,
+                    'remark' => $remark
+                ]);
 
-            $userWalletService = (new WalletServiceFactory())->getWalletServiceFactory($user);
+                $userWalletService = (new WalletServiceFactory())->getWalletServiceFactory($user);
 
-            $adminWallet = Wallet::whereHas('user', function ($query) {
-                $query->where('user_type_id', UserType::AdminWithdrawal);
-            })->first();
+                $adminWallet = Wallet::whereHas('user', function ($query) {
+                    $query->where('user_type_id', UserType::AdminWithdrawal);
+                })->first();
 
-            $transactionType = (new TransactionFactory($withdrawal))->get_transaction_type(WalletTransactionType::WITHDRAWAL);
+                $transactionType = (new TransactionFactory($withdrawal))->get_transaction_type(WalletTransactionType::WITHDRAWAL);
 
-            /*Debit customers wallet for withdrawal amount*/
-            $userWalletService->debit_wallet($transactionType->get_transaction_details());
+                /*Debit customers wallet for withdrawal amount*/
+                $userWalletService->debit_wallet($transactionType->get_transaction_details());
 
-            (new WalletService($adminWallet))->credit_wallet($transactionType->get_transaction_details());
+                (new WalletService($adminWallet))->credit_wallet($transactionType->get_transaction_details());
 
+
+                return $withdrawal;
+
+            });
 
             return $withdrawal;
-
-        });
-
-        return $withdrawal;
-
+        }
     }
 
 

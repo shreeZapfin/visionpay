@@ -15,4 +15,14 @@ final class UserType extends Enum
     const AdminCommission = 6;
     const SubAccount = 7;
     const AdminWithdrawal = 8;
+    const Staff=9;
+
+    static function StaffTypes(){
+        return [ self::Admin,self::Staff,self::Agent ];
+    }
+
+
+    static function UniqueAdminTypes(){
+        return [ self::Admin,self::AdminCommission,self::AdminWithdrawal ];
+    }
 }

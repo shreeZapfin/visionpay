@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -40,6 +41,7 @@ class UserService
         $user->gender = isset($userDetailsArray['gender']) ? $userDetailsArray['gender'] : null;
         $user->address = isset($userDetailsArray['address']) ? $userDetailsArray['address'] : null;
         $user->personal_tin_no = isset($userDetailsArray['personal_tin_no']) ? $userDetailsArray['personal_tin_no'] : null;
+        $user->source_of_income_id = isset($userDetailsArray['source_of_income_id']) ? $userDetailsArray['source_of_income_id'] : null;
 
         /*Storage*/
         $user->selfie_img_url = isset($userDetailsArray['selfie_img']) ? (new App\Helpers\FileHelper())->storeFileOnS3($userDetailsArray['selfie_img'], 'selfie_images') : null;
@@ -57,7 +59,12 @@ class UserService
         $user->save();
         $user->pacpay_user_id = 'PP-' . date('y') . '-' . $user->id;
         $user->qr_code_info = 'https://pacpay.com/app?action=send&user_id=' . $user->id;
-
+        (new UserEventService($user))->createEvent([
+            'remark' => 'User has signed up',
+            'event' => App\Enums\ApiEventEnum::INITIATED_SIGNUP,
+            'action_user_id' => (Auth::user()) ? Auth::user()->id : $user->id,
+            'data' => ['ip' => request()->getClientIp(), 'request' => Arr::except($userDetailsArray,['password'])]
+        ]);
         /*If merchant*/
 
         if (in_array($userDetailsArray['user_type_id'], [App\Enums\UserType::Agent, App\Enums\UserType::Merchant])) {
@@ -69,9 +76,7 @@ class UserService
             $business->save();
 
             if ($userDetailsArray['user_type_id'] == App\Enums\UserType::Agent) {
-                $agent = $user->agent()->firstOrCreate();
-                $agent->agentWallets()->create(['wallet_type' => 'FUNDS']);
-                $agent->agentWallets()->create(['wallet_type' => 'COMMISSION']);
+                $user->createAgentProfile();
             }
         }
 
@@ -111,10 +116,11 @@ class UserService
 
         DB::transaction(function () use ($user, $userDetailsArray) {
             /*User profile*/
-            $user->mobile_no = isset($userDetailsArray['mobile_no']) ? $userDetailsArray['mobile_no'] : $user->mobile_no;
-            $user->email = isset($userDetailsArray['email']) ? $userDetailsArray['email'] : $user->email;
+            //$user->mobile_no = isset($userDetailsArray['mobile_no']) ? $userDetailsArray['mobile_no'] : $user->mobile_no;
+            //$user->email = isset($userDetailsArray['email']) ? $userDetailsArray['email'] : $user->email;
+            //$user->user_type_id = isset($userDetailsArray['user_type_id']) ? $userDetailsArray['user_type_id'] : $user->user_type_id;
+
             $user->username = isset($userDetailsArray['username']) ? $userDetailsArray['username'] : $user->username;
-            //            $user->user_type_id = isset($userDetailsArray['user_type_id']) ? $userDetailsArray['user_type_id'] : $user->user_type_id;
             $user->city_id = isset($userDetailsArray['city_id']) ? $userDetailsArray['city_id'] : $user->city_id;
             $user->first_name = isset($userDetailsArray['first_name']) ? $userDetailsArray['first_name'] : $user->first_name;
             $user->last_name = isset($userDetailsArray['last_name']) ? $userDetailsArray['last_name'] : $user->last_name;
@@ -125,7 +131,7 @@ class UserService
 
             $user->payment_link = isset($userDetailsArray['payment_link']) ? $userDetailsArray['payment_link'] : $user->payment_link;
             $user->qr_code_info = isset($userDetailsArray['qr_code_info']) ? $userDetailsArray['qr_code_info'] : $user->qr_code_info;
-
+            $user->source_of_income_id = isset($userDetailsArray['source_of_income_id']) ? $userDetailsArray['source_of_income_id'] : null;
 
             /*If update business*/
             if (in_array($user->user_type_id, [App\Enums\UserType::Agent, App\Enums\UserType::Merchant])) {
@@ -149,6 +155,8 @@ class UserService
                         $user->transfer_limit_scheme_id = $userDetailsArray['transfer_limit_scheme_id'];
 
                 if (isset($userDetailsArray['user_permissions'])) {
+                    if ($userDetailsArray['user_permissions']['agent_access'])
+                        $user->createAgentProfile();
                     (new UserPermissionService())->update_user_permission($user, $userDetailsArray['user_permissions']);
                 }
                 $user->has_sub_accounts = isset($userDetailsArray['has_sub_accounts']) ? $userDetailsArray['has_sub_accounts'] : $user->has_sub_accounts;
@@ -170,9 +178,15 @@ class UserService
                         $user->username = null;
                         $user->tokens()->delete();
                     }
+
+                if (isset($userDetailsArray['wallet_limit'])) {
+                    $walletService = (new WalletServiceFactory())->getWalletServiceFactory($user);
+                    $walletService->update_wallet_limit($userDetailsArray['wallet_limit']);
+                }
+
             }
 
-            if (in_array(Auth::user()->user_type_id, [App\Enums\UserType::Agent, App\Enums\UserType::Admin])) /*Agent or admin can mark user as verified*/ {
+            if (in_array(Auth::user()->user_type_id, [App\Enums\UserType::Agent, App\Enums\UserType::Admin, App\Enums\UserType::Staff])) { /*Agent/Staff or admin can mark user as verified*/
                 $user->is_kyc_verified = isset($userDetailsArray['is_kyc_verified']) ? $userDetailsArray['is_kyc_verified'] : $user->is_kyc_verified;
                 $user->kyc_verified_by = Auth::user()->id;
                 $user->kyc_verified_at = now();
@@ -200,4 +214,5 @@ class UserService
             $q->where('user_type_id', $userTypeId);
         });
     }
+
 }

@@ -6,11 +6,15 @@ use App\Enums\UserType;
 use App\Exports\UsersExport;
 use App\Helpers\ResponseFormatter;
 use App\Helpers\Utils;
+use App\Http\Requests\AccountBlockRequest;
 use App\Http\Requests\AdminRequest;
+use App\Http\Requests\BlockWalletBalanceRequest;
 use App\Http\Requests\DownloadQrRequest;
 use App\Http\Requests\PasswordChangeRequest;
 use App\Http\Requests\SearchUserRequest;
+use App\Http\Requests\StaffRegistrationRequest;
 use App\Http\Requests\UserRegistrationRequest;
+use App\Http\Resources\MinimumUserDataRequiredResource;
 use App\Models\BusinessType;
 use App\Models\MerchantCategory;
 use App\Models\User;
@@ -22,7 +26,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class UserController extends Controller
 {
@@ -35,7 +38,7 @@ class UserController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return ResponseFormatter::success($user->load('business', 'wallet', 'paymentChargePackage', 'biller'), 'User details');
+        return ResponseFormatter::success($user->load('business', 'wallet', 'paymentChargePackage', 'biller', 'user_permission', 'agent.agentWallets', 'city', 'master_account:id,profile_pic_img_url,user_type_id,master_account_user_id', 'master_account.business:user_id,business_name'), 'User details');
     }
 
     /**
@@ -48,11 +51,6 @@ class UserController extends Controller
         //
     }
 
-    public function getUser($Id)
-    {
-        $userDetails = User::where('id',$Id)->first();
-       return $userDetails;
-    }
     /**
      * Store a newly created resource in storage.
      *
@@ -81,12 +79,12 @@ class UserController extends Controller
             'business.merchantCategory',
             'paymentChargePackage',
             'userEvents',
-            'biller'
+            'biller',
+            'user_permission'
         );
         return ResponseFormatter::success($user);
     }
 
-    
     /**
      * Show the form for editing the specified resource.
      *
@@ -95,14 +93,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $user->load('transferLimitScheme');
-        $user->load('business');
+        $user->load('transferLimitScheme', 'business', 'sourceOfIncome', 'user_permission');
+//        $user->load('business');
         /*  $user->load('country');
         $user->load('city'); */
         return view('user_detail')->with('userDetails', $user);
     }
-
-   
 
     public function editBillers(User $user)
     {
@@ -250,14 +246,16 @@ class UserController extends Controller
         $userFilterQuery = User::with([
             'city', 'wallet', 'business', 'agent.agentWallets', 'paymentChargePackage', 'biller',
             'master_account:id,profile_pic_img_url,user_type_id', 'master_account.business:business_name,user_id'
-        ])->filter($request->all())->orderByDesc('id');
+        ])->filter($request->all());
 
         if ($request->request_origin == 'web')
             return datatables()->eloquent($userFilterQuery)->addColumn('full_name', function (User $user) {
                 return $user->full_name;
             })->toJson();
-
         return ResponseFormatter::success($userFilterQuery->paginate($request->per_page));
+        //$data = MinimumUserDataRequiredResource::collection($userFilterQuery->paginate($request->per_page));
+
+        //  return ResponseFormatter::success($data);
     }
 
 
@@ -288,7 +286,7 @@ class UserController extends Controller
             return ResponseFormatter::error([], 'Invalid otp', 400, 1409);
     }
 
-    public function accountBlockStatus(AdminRequest $request, User $user)
+    public function accountBlockStatus(AccountBlockRequest $request, User $user)
     {
         $this->validate($request, ['account_blocked' => 'required|boolean']);
 
@@ -299,7 +297,7 @@ class UserController extends Controller
         return ResponseFormatter::success([], 'User block status changed succesfully');
     }
 
-    public function blockWalletBalance(AdminRequest $request, User $user)
+    public function blockWalletBalance(BlockWalletBalanceRequest $request, User $user)
     {
 
         $this->validate($request, ['amount' => 'required|numeric']);
@@ -336,27 +334,32 @@ class UserController extends Controller
     public function prevalidate(Request $request)
     {
         $this->validate($request, [
-            'mobile_no' => 'required_without:username|digits_between:7,10',
-            'username' => 'required_without:mobile_no'
+            'mobile_no' => 'required|digits_between:7,10',
+            'username' => 'required',
+            'email' => 'required|email'
         ]);
 
 
         $user = User::query();
 
-        $request->whenFilled('mobile_no', function () use (&$user, $request) {
-            $user->where('mobile_no', $request->mobile_no);
-        })->whenFilled('username', function () use (&$user, $request) {
-            $user->where('username', $request->username);
-        });
+        $mobUser = $user->clone()->where('mobile_no', $request->mobile_no)->count();
 
-        $user = $user->first();
+        $usernameUser = $user->clone()->where('username', $request->username)->count();
 
-        $exists = false;
+        $emailUser = $user->clone()->where('email', $request->email)->count();
 
-        if ($user)
-            $exists = true;
 
-        return ResponseFormatter::success(['exists' => $exists]);
+        return ResponseFormatter::success([
+                'mobile_no' => [
+                    'exists' => $mobUser
+                ],
+                'username' => [
+                    'exists' => $usernameUser
+                ],
+                'email' => [
+                    'exists' => $emailUser
+                ]
+        ]);
     }
 
     function changeUserIdentifier(Request $request)
@@ -371,7 +374,16 @@ class UserController extends Controller
         $this->validate($request, [
             'new_mobile_no' => 'required_without:new_email|digits_between:7,10|unique:users,mobile_no',
             'new_email' => 'required_without:new_mobile_no|email|unique:users,email',
-            'password' => 'required',
+            'password' => [
+                'required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+                'confirmed'
+            ],
             'txn_pin' => 'required|digits:4',
             'otp' => 'required|digits:6' #Request triggered from POST {url}/api/otp/send
         ]);
@@ -397,7 +409,7 @@ class UserController extends Controller
 
                 if ($request->has('new_email'))
                     if ((new TwilioOtpService())->verifyOtpEmail($request->otp, $request->new_email)) {
-                        $user->email = $request->email;
+                        $user->email = $request->new_email;
                     } else
                         return ResponseFormatter::error([], 'Invalid otp', 400, 1409);
 
@@ -409,5 +421,11 @@ class UserController extends Controller
             'password' => ['The provided credentials are incorrect.'],
         ]);
 
+    }
+
+    function storeStaff(StaffRegistrationRequest $request)
+    {
+        $user = (new UserService())->addUser($request->validated());
+        return ResponseFormatter::success($user->only('mobile_no', 'id', 'pacpay_user_id'), 'Staff created');
     }
 }

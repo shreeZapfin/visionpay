@@ -1,90 +1,154 @@
-@extends('layouts.master')
-@section('styles')
-<style>
-    .voucher_description{
-        width: 150px !important;
-        border:1px solid red;
-    }
-</style>
-@endsection
-@section('content')
-                    <!-- PAGE-HEADER -->
-                    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-4">
-                        <h1 class="page-title">Ticket List</h1>
-                        <div>
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{url('/index')}}">Dashboard</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Ticket List</li>
-                            </ol>
-                        </div> 
-                    </div>
-                    <!-- PAGE-HEADER END -->
+<!DOCTYPE html>
+<html lang="en">
 
-                    <!-- CONTAINER -->
-                    <div class="main-container container-fluid">
-                        <!-- ROW OPEN -->
-                        <div class="row row-cards">
-                            <div class="col-xl-12">
-                                <div class="card p-0">
-                                    <div class="card-body p-4">
-                                        <div class="row align-items-center">
-                                            <form name='filter_search' id='filter_search' style="margin-top: 20px;">
-                                                    <div class="input-group">
-                                                        <div class="form-group col-sm">
-                                                            <label>Transaction Id</label>
-                                                            <input type="text" name="transaction_id" id="transaction_id" class="form-control"
-                                                            placeholder="Filter by Transaction Id" />
-                                                        </div> &nbsp;&nbsp;
-                                                        <div class="form-group col-sm">
-                                                            <label>Ticket Status</label>
-                                                            <select name="complaint_status" id="complaint_status"
-                                                                class="select2 form-control custom-select">
-                                                                <option value="" selected="selected">Select Ticket Status</option>
-                                                                <option value="PENDING">Pending</option>
-                                                                <option value="RESOLVED">Resolved</option>
-                                                            </select>
-                                                        </div> &nbsp;&nbsp;
-                                                        <div class="input-group col-sm pb-3">
-                                                        <button type="button" name="filter" id="filter" class="btn border"
-                                                            style="text-align: center; margin-top:30px; height : 35px; width: 80px;border-top-right-radius: 0.3rem;border-bottom-right-radius: 0.3rem; ">
-                                                            <i class="bi bi-search text-muted"></i></button>
-                                                        </div>
-                                                        <button type="button" class="btn-fill btn btn-secondary float-end"  id='btn_raise_ticket'
-                                                        style="text-align: center; margin-top:30px; height : 35px; border-radius:0.3rem;
-                                                        background:	#006400; color: rgb(255,255,255);">Raise Ticket</button>
-                                                    </div>
-                                                </form>
-                                            <div class="e-table px-5 pb-5 pd-12">
-                                                <div class="table-responsive table-lg">
-                                                    <table class="table border-top table-bordered mb-0 text-nowrap complaintdtable" id="dataTable" style="width:100%;">
-                                                        <thead class="border-top">
-                                                            <tr>
-                                                                <th class="border-bottom-0">Created<br>At</th>
-                                                                <th class="border-bottom-0">Transaction Type</th>
-                                                                <th class="border-bottom-0 ">Transaction Id</th>
-                                                                <!-- <th class="border-bottom-0 ">Complaint Type Id</th> -->
-                                                                <th class="border-bottom-0 ">User Ticket<br>Description</th>
-                                                                <th class="border-bottom-0 ">Admin Resolution<br>Description</th>
-                                                                <th class="border-bottom-0 ">Status</th>
-                                                                <th class="border-bottom-0">Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody></tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pacpay Admin Panel</title>
+
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet" media="screen" />
+
+
+    <style>
+        .buttonIn {
+            width: 300px;
+            position: relative;
+        }
+
+        input {
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+            outline: none;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        #submit_button {
+            position: absolute;
+            top: 0;
+            border-radius: 5px;
+            right: 0px;
+            z-index: 2;
+            border: none;
+            height: 30px;
+            cursor: pointer;
+            color: white;
+            background-color: #1e90ff;
+            transform: translateX(2px);
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        {{-- <x- sidebar /> --}}
+        @include('sidebar')
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                {{-- <x- header /> --}}
+                @include('header')
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Ticket List</h5>
+                            <button type="submit" class="btn-fill btn" id='btn_raise_ticket'
+                                style="float:right; margin-top: -20px;">Raise Ticket</button>
+                        </div>
+                        <form name='filter_search' id='filter_search' style="margin-top: 20px;">
+                            <div class="input-group input-daterange">
+                                <div class="form-group col-sm">
+                                    <label>Transaction Id</label>
+                                    <input type="text" name="transaction_id" id="transaction_id" class="form-control"
+                                        placeholder="Filter by Transaction Id" />
+                                </div> &nbsp;&nbsp;
+                                <div class="form-group col-sm">
+                                    <label>Ticket Status</label>
+                                    <select name="complaint_status" id="complaint_status"
+                                        class="select2 form-control custom-select">
+                                        <option value="" selected="selected">Select Ticket Status</option>
+                                        <option value="PENDING">Pending</option>
+                                        <option value="RESOLVED">Resolved</option>
+                                    </select>
                                 </div>
-                                <!-- /.container-fluid -->
-                                <div id='response'></div>
+                                &nbsp;&nbsp;
+                                <div class="form-group col-sm">
+                                    <button type="button" name="filter" id="filter" class="btn btn-info btn-sm"
+                                        style="text-align: center; margin-top:30px; height : 40px; width: 80px;">Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Ticket ID</th>
+                                            <th class="text-center">Created At</th>
+                                            <th class="text-center">Transaction Type</th>
+                                            <th class="text-center">Transaction Id</th>
+                                            {{-- <th class="text-center">Complaint Type Id</th> --}}
+                                            <th class="text-center">User Ticket Description</th>
+                                            <th class="text-center">Admin Resolution Description</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-center">ACTION</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <!-- ROW CLOSED -->
                     </div>
-                    <!-- CONTAINER CLOSED -->
-   
+
+
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Pacpay 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+            <div id="loader"></div>
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="{{ asset('#page-top') }}">
+        <i class="fas fa-angle-up"></i> </a>
+
     <!-- Raise complaint-->
     <div class="modal fade" id="raise_complaint_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -92,93 +156,160 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Raise Complaint</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
                 </div>
-                <div class="modal-body px-4">
+                <div class="modal-body">
                     <form name='raiseComplaint' id='raiseComplaint'>
-                        <div class="row gy-3">
-                                <div class="col-xl-12">
+                        <div class="row">
+                            <div class="col-md-6" style="margin:0 auto; display:block;">
+                                <div class="form-group">
                                     <label>Complaint Type</label>
                                     <select name="complaint_type_id" id="complaint_type_id"
                                         class="select2 form-control custom-select" required>
 
                                     </select>
                                 </div>
-                                <div class="col-xl-12">
-                                    <label>Transaction Id</label>
-                                        <input type="text" name="transaction_id" class="form-control"
-                                            id="transaction_id" required>
+                                <div class="form-group" id="UserIDD">
+                                    <label>User</label><br>
+                                    <select name="user_id" id="user_id" style="width: 220px;margin: 10px;"
+                                        class="js-example-basic-single select2 form-control">
+                                    </select>
                                 </div>
-                                <div class="col-xl-12">
+                                <div class="form-group" id="TransactionIdd" style="display: none;">
+                                    <label>Transaction Id</label>
+                                    <div class="input-group">
+                                        <input type="text" name="transaction_id" class="form-control"
+                                            id="transaction_id">
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label>User Complaint Description</label>
-                                        <input type="text" name="user_complaint_description" class="form-control"
-                                            id="user_complaint_description" required>
+                                    <div class="input-group">
+                                        {{-- <input type="text" name="user_complaint_description" class="form-control"
+                                            id="user_complaint_description" required> --}}
+                                        <textarea name="user_complaint_description" class="form-control" id="user_complaint_description" required>
+                                                </textarea>
+
+                                    </div>
                                 </div>
                             </div>
-                        <div id='response'></div>
-                        <div class="text-center px-4 py-4">
-                            <button type="submit" class="btn btn-primary btn-rounded btn-fw" id='submit_button'
-                                data-user-id="" style="font-weight:500;">Add</button>
-                            <button type="button" class="btn btn-light cancel_btn" data-bs-dismiss="modal" id="cancel_btn">Cancel</button>
+                            <br><br>
                         </div>
+                        <div id='response'></div>
+                        <div style="text-align:center">
+                            <button type="submit" class="btn btn-primary btn-rounded btn-fw" data-user-id=""
+                                style="font-weight:500;">Add</button>
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+
                     </form>
+
+
+                </div>
+
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Message List Modal-->
-    <div class="modal right fade" id="message_list_form" tabindex="-1" role="dialog"
+    <div class="modal fade" id="message_list_form" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="chat-popup" id="myForm">
-                    <div class="main-chat-header modal-header pt-3 d-flex d-sm-flex justify-content-between">
-                        <div class="main-img-user online"></div>
-                            <div class="main-chat-msg-name mt-2 ms-2 flex-fill">
-                                <h6 id="userName"></h6>
-                                <!-- <small class="me-3">Last Seen 2 Hours ago</small> -->
-                            </div>
-                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                    </div>
-                    <div id="messageList" class="main-chat-body flex-2 mt-2">
-                    </div>
-                    <form name='sendMessage' id='sendMessage' class="form-container">
-                        <div class="main-chat-footer">
-                            <!-- <div class="type_msg">
-                                <div class="input_msg_write"> -->
-                                    <!-- <input type="text" class="write_msg" placeholder="Type a message"
-                                        name="message"> -->
-                                        <input class="form-control" placeholder="text here..." type="text" name="message">
-                                        <button type="submit" class="btn btn-icon  btn-primary brround" id='submit_button'  data-message-id="" ><i class="fa fa-paper-plane-o"></i></button>
-                                        <!-- <button type="submit" class="btn btn-primary btn-rounded btn-fw msg_send_btn"
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Chat</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span> </button>
+                </div>
+                <div class="chat-popup" id="myForm" style="padding: 5px;">
+
+                    {{-- <form name='sendMessage' id='sendMessage' class="form-container">
+
+                        <div style="text-align:right; margin: 0 auto; max-width: 800px; padding: 0 20px;">
+                            <div class="type_msg">
+                                <div class="input_msg_write">
+                                    <input type="text" class="write_msg" placeholder="Type a message"
+                                        name="message">
+                                    <button type="submit" class="btn btn-primary btn-rounded btn-fw msg_send_btn"
                                         id='submit_button' data-message-id="" style="font-weight:500;"><i
-                                            class="fa fa-paper-plane" aria-hidden="true"></i></button> -->
-                                <!-- </div>
-                            </div> -->
+                                            class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                    </form> --}}
+                    <div id="messageList">
+
+                    </div>
+
                 </div>
 
-                    <div class="chat_user_details" id="chat_user_details">
-                                        
-                    </div>
-                    <div class="modal-header close_btn_header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-footer">
+                    <form name='sendMessage' id='sendMessage' class="form-container">
+
+                        <div class="buttonIn">
+                            <input type="text" id="enter" placeholder="Type a message" name="message">
+                            <button type="submit" id='submit_button' data-message-id=""><i
+                                    class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-@endsection
-@section('scripts')
 
-<script type="text/javascript">
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+    {{-- Date Picker --}}
+    <script src="{{ asset('vendor/moment/moment.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+
+    <script type="text/javascript">
         $(document).ready(function() {
             $(".navbar-nav li").removeClass("active"); //this will remove the active class from  
             //previously active menu item 
             $('#complaint').addClass('active');
+
+
+            $('#complaint_type_id').on('change', function() {
+                console.log("inside on change type");
+                if (this.value == 1 || this.value ==
+                    2) {
+                    $("#TransactionIdd").hide();
+                    $("#UserIDD").show();
+                } else {
+                    $("#TransactionIdd").show();
+                    $("#UserIDD").hide();
+                }
+            });
+            $('.js-example-basic-single').select2({
+                placeholder: "Select User",
+                allowClear: true
+            });
+
+            //Select User
+            $.ajax({
+                url: 'api/user/search',
+                type: 'get',
+                data: {
+                    'request_origin': 'web'
+                },
+                success: function(data) {
+                    // console.log('data');
+                    $('#user_id').empty();
+                    $("#user_id").append(new Option("Select User", ""));
+                    $.each(data.data, function($index, $value) {
+
+                        $('#user_id').append('</option>' + '<option value="' + $value.id +
+                            '" >' +
+                            $value
+                            .username + '-' + $value.full_name + '</option>');
+                    })
+                }
+            });
 
             fetch_data();
 
@@ -204,21 +335,20 @@
 
                     },
                     columnDefs: [{
-                        targets: 6,
+                        targets: 7,
                         render: function(data, type, row, meta) {
                             // console.log('data');
-                            // href="{{ url('api/user') }}/' + row.id + '/edit"
-                            // $(".userprofiledetails").append('<a href="{{ url('api/user') }}/' + row.user_id + '/edit">View all</a>');
-                            // $(".userprofiledetails").append('<a href="{{ url('api/user') }}/' + row.user_id + '/edit">View all</a>');
-                            return '<td class="text-center"><div class="d-flex"><button data-complaintid="' +
+                            return '<td class="text-center"><button data-complaintid="' +
                                 row.id +
-                                '" class="complaint_id_entry btn btn-info btn-rounded btn-fw" title="Resolve" style="color: "#FFFFFF";">Resolve</button><button style="background-color: transparent; border: none;" title="Chat Now" data-userid="'+row.user_id+'" data-messageid="' +
+                                '" class="complaint_id_entry btn btn-primary btn-rounded btn-fw" style="color: "#FFFFFF";">Resolve</button><button style="background-color: transparent; border: none;" title="Message" data-messageid="' +
                                 row.id +
-                                '" class="message_list"><i class="bi bi-chat-dots-fill" style="color: #23c84e; font-size:24px;"></i></button></div></td>';
+                                '" class="message_list"><i class="fas fa-comment-dots" style="color: rgb(30, 50, 250); font-size:24px;"></i></button></td>';
                         }
 
                     }],
                     "columns": [{
+                            data: 'id'
+                        }, {
                             data: 'created_at',
                             className: "created_at",
                             render: function(data, type, row, meta) {
@@ -256,6 +386,8 @@
                 var transaction_id = $('#transaction_id').val();
                 var complaint_status = $('#complaint_status').val();
 
+
+
                 // console.log("from_date " + from_date);
                 // console.log("to_date " + to_date);
                 // console.log("transaction_id " + transaction_id);
@@ -265,7 +397,7 @@
 
 
             //Raise Complaint
-            $("#btn_raise_ticket").on('click', function() {
+            $("#btn_raise_ticket").on('click', function(e) {
 
                 //Complaint Type List
                 $.ajax({
@@ -280,12 +412,22 @@
                                 .id +
                                 '" >' +
                                 $value
+                                .transaction_type + ": " +
+                                $value
                                 .type_description + '</option>');
                         })
+
+
                     }
                 });
-                $('#raise_complaint_form').modal('show');
 
+                //clear form fields
+                var form = $("#raiseComplaint");
+                if (e.target !== form[0]) {
+                    form[0].reset();
+                }
+
+                $('#raise_complaint_form').modal('show');
             });
             $('#raiseComplaint').on('submit', function(e) {
                 e.preventDefault();
@@ -442,19 +584,13 @@
             var msgTimer;
             $("#dataTable").on('click', '.message_list', function() {
                 $('#messageList').empty();
-                $('#chat_user_details').empty();
-                $('#userName').empty();
-                $(".online").empty();
-                $("#mobVal").empty();
-                $("#emailVal").empty();
-
 
                 var MessageId = $(this).data('messageid');
-                var userid = $(this).data('userid');
-
-                loadProfileBox(userid);
+                // console.log("MessageId: " + MessageId);
 
                 reloadChatBox(MessageId);
+
+
                 var interval = 5000;
                 msgTimer = setInterval(function() {
                     //var MessageId = $(this).data('messageid');
@@ -462,80 +598,23 @@
                     reloadChatBox(MessageId);
                 }, interval);
 
+
+
+                //  console.log("dgdsg");
                 $('#message_list_form').modal('show');
                 $('#submit_button').attr('data-message-id', $(this).data('messageid'));
+                //var MessageId = $(this).data('messageid');
+                //console.log("MessageId : " + MessageId);
             });
 
             $("#message_list_form").on("hide.bs.modal", function() {
                 clearInterval(msgTimer);
             });
 
-            // loadProfileBox
-            function loadProfileBox(userid) {
-                $.ajax({
-                    url: '{{ url('getUser') }}/' + userid ,
-                    type: 'get',
-                    success: function(data) {
-                        var name;
-                        if (data.user_type_id == 2 || data.user_type_id == 5) {
-                            name = data.full_name;
-                        } else if (data.user_type_id == 3 || data.user_type_id == 4) {
-                            name = data.business.business_name;
-                        } 
-                        $(".online").append('<img alt="avatar" src="'+ data.profile_pic_img_url+'"><span class="avatar-status bg-primary"></span>');
-                        var userName = document.getElementById("userName");
-                        userName.textContent += name;
-                         $("#chat_user_details").append('<div class="card-body p-0">'+
-                                            '<div class="">'+
-                                            '<div class="text-center chat-image border-bottom p-4 pb-0 mb-4 br-5">'+
-                                            '<img src="'+ data.profile_pic_img_url+'" width="150" alt="img" id="profileImage" class="mb-2">'+
-                                            '<div class="main-chat-msg-name">'+
-                                            '<h5 class="mb-0 text-dark fw-semibold">'+name+'</h5>'+
-                                            '<p class="text-muted fs-13">'+data.username+'</p>'+
-                                            '</div>'+
-                                            '</div>'+
-                                            '<div class="border-bottom">'+
-                                            '<div class="d-flex mb-2">'+
-                                            '<div><a class="nav-link border rounded-pill avatar avatar-sm bg-light me-2"><i class="fe fe-mail"></i></a>'+
-                                            '</div>'+
-                                            '<div class="ms-2">'+
-                                            '<p class="fs-13 fw-600 mb-0">Email</p>'+
-                                            '<p class="fs-12 text-muted"><input id="emailVal" value="'+data.email+'" hidden/>'+data.email+'<button title="Copy" class="nav-link border rounded-pill avatar avatar-sm bg-light me-2 ms-2" onclick="copyEmail();"><i class="fe fe-clipboard"></i></button></p>'+
-                                            '</div>'+
-                                            '</div>'+
-                                            '<div class="d-flex mb-2 mt-2">'+
-                                            '<div>'+
-                                            '<a class="nav-link border rounded-pill avatar avatar-sm bg-light me-2"><i class="fe fe-phone"></i></a>'+
-                                            ' </div>'+
-                                            ' <div class="ms-2">'+
-                                            ' <p class="fs-13 fw-600 mb-0">Phone</p>'+
-                                            ' <p class="fs-12 text-muted">'+data.mobile_no+'<button title="Copy" class="nav-link border rounded-pill avatar avatar-sm bg-light me-2 ms-2" onclick="copyPhone();"><i class="fe fe-clipboard"></i></button></p>'+
-                                            ' </div>'+
-                                            '</div><input id="mobVal" value="'+data.mobile_no+'" hidden/>'+
-                                            '<div class="d-flex mb-2 mt-2">'+
-                                             ' <div>'+
-                                             '<a class="nav-link border rounded-pill avatar avatar-sm bg-light me-2"><i class="fe fe-map-pin"></i></a>'+
-                                                         '</div>'+
-                                                        ' <div class="ms-2">'+
-                                                        '<p class="fs-13 fw-600 mb-0">Address</p>'+
-                                                            '<p class="fs-12 text-muted">'+data.address+'</p>'+
-                                                            '</div>'+
-                                                        '</div>'+
-                                                    '</div>'+
-                                                '  <div class="border-bottom">'+
-                                                '  <div class="fs-15 fw-600 mt-3 mb-2">Shared Files :'+
-                                                    '<span class="float-end fs-12 userprofiledetails">'+
-                                                        ' <a href="{{ url('api/user') }}/'+data.id+'/edit" class="text-underline"><u>View All</u></a>'+
-                                                            ' </span>'+
-                                                        '</div>'+
-                                                    '</div>'+
-                                                '</div></div>');
-                    }
-                });
-               
-            }
-            
+
             function reloadChatBox(MessageId) {
+                // console.log("inside function");
+
                 $.ajax({
                     url: '{{ url('api/complaint') }}/' + MessageId + '/message',
                     type: 'get',
@@ -544,32 +623,26 @@
                         //console.log('data');
 
                         $.each(data.data.data, function($index, $value) {
-                                if ($value.message_type == 'SENT') {
+                            $("#messageList").append(
+                                '</br></br>');
+                            if ($value.message_type == 'SENT') {
                                 $("#messageList").append(
-                                    '<div class="media flex-row-reverse chat-right">'+
-                                        // '<div class="main-img-user online"><img alt="avatar" src="http://localhost/Vexel/Vexel/build/assets/images/users/21.jpg"><span class="avatar-status bg-primary"></span></div>'+
-                                            '<div class="media-body">'+
-                                                '<div class="main-msg-wrapper">'+
-                                                    $value.message +
-                                                '</div>'+
-                                            '<div>'+
-                                            '<span>'+ moment.utc($value.created_at).local().format('DD/MM/YYYY HH:mm a')+'</span> '+
-                                            '</div>'+
-                                        '</div>'+
-                                    '</div>');
+                                    '<div class="outgoing_msg sent_msg"><p>' +
+                                    $value
+                                    .message + '</p></div>' +
+                                    '</br><p class="sent_msg" style="font-size:10px;">' +
+                                    moment.utc($value
+                                        .created_at).local().format('DD/MM/YYYY HH:mm a') +
+                                    '</p>');
                             } else {
                                 $("#messageList").append(
-                                    '<div class="media chat-left">'+
-                                        // '<div class="main-img-user online"><img alt="avatar" src="http://localhost/Vexel/Vexel/build/assets/images/users/21.jpg"><span class="avatar-status bg-primary"></span></div>'+
-                                            '<div class="media-body">'+
-                                                '<div class="main-msg-wrapper">'+
-                                                    $value.message +
-                                                '</div>'+
-                                            '<div class="datewrap">'+
-                                            '<span>'+ moment.utc($value.created_at).local().format('DD/MM/YYYY HH:mm a')+'</span>'+
-                                            '</div>'+
-                                        '</div>'+
-                                    '</div>');
+                                    '<div class="received_msg received_withd_msg"><p>' +
+                                    $value
+                                    .message + '</p></div>' +
+                                    '</br><p class="received_withd_msg" style="font-size:10px;">' +
+                                    moment.utc($value
+                                        .created_at).local().format('DD/MM/YYYY HH:mm a') +
+                                    '</p>');
                             }
                         })
 
@@ -639,26 +712,7 @@
             });
 
         });
-
-        // copy Email to ClipBoard
-        function copyEmail(){
-            var copyText1 = document.getElementById("emailVal");
-            // Select the text field
-            copyText1.select();
-
-            // Copy the text inside the text field
-            navigator.clipboard.writeText(copyText1.value);
-        }
-        // copy Phone to Clipboard
-        function copyPhone(){
-            // Get the text field
-            var copyText = document.getElementById("mobVal");
-            // Select the text field
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); // For mobile devices
-
-            // // Copy the text inside the text field
-            navigator.clipboard.writeText(copyText.value);
-        }
     </script>
-@endsection
+</body>
+
+</html>

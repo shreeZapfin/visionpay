@@ -15,4 +15,5 @@ abstract class UserType
     const Agent = 3;
     const Merchant = 4;
     const Biller =5;
+    const Staff = 9;
 }

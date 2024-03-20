@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Permissions;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,7 @@ class AdvertisementStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        if (Auth::user()->is_admin)
+        if (Auth::user()->is_admin || Auth::user()->hasPermissionTo(Permissions::MANAGE_ADVERTISEMENT))
             return true;
 
         return false;

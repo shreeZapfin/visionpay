@@ -15,7 +15,7 @@ class CustomerRequest extends FormRequest
      */
     public function authorize()
     {
-        if (Auth::user()->user_type_id == UserType::Customer)
+        if (Auth::user()->user_type_id == UserType::Customer || Auth::user()->is_admin || Auth::user()->user_type_id == UserType::Merchant)
             return true;
 
         return false;

@@ -26,10 +26,16 @@ class WalletTransactionObserver
      */
     public $afterCommit = true;
 
+    /*This function after a transaction is commited on the basis of the transaction type does the following
+        *If voucher code present in the request and valid give cashback
+        *If bill payment transaction charge the biller fees
+        *If fund transfer is from customer to customer charge the sender according to  ChargePackageType set for the sender of the txn
+        *If fund transfer is  customer to merchant charge then charge the merchant accepting the txn according to the package set
+    */
     public function created(WalletTransaction $walletTransaction)
     {
 
-        if ( ! in_array($walletTransaction->transaction_type ,[
+        if (!in_array($walletTransaction->transaction_type, [
             WalletTransactionType::CASHBACK,
             WalletTransactionType::BILL_PAYMENT_CHARGE,
             WalletTransactionType::P2P_PAYMENT_CHARGE,
@@ -70,10 +76,10 @@ class WalletTransactionObserver
             if ($walletTransaction->transaction_type == WalletTransactionType::WALLET_TRANSFER) {
                 /*Charge customer/merchant the payment charge*/
                 $walletTransaction->load('fundRequest');
-                if($walletTransaction->fundRequest->is_wallet_refill)   /*If transfer is for wallet refill do not charge*/
+                if ($walletTransaction->fundRequest->is_wallet_refill)   /*If transfer is for wallet refill do not charge*/
                     return;
 
-                if($walletTransaction->fundRequest->is_sub_account_request) /*If transfers are between master->sub ignore charges*/
+                if ($walletTransaction->fundRequest->is_sub_account_request) /*If transfers are between master->sub ignore charges*/
                     return;
 
                 /*Get type of wallet transfer (p2p or merchant payment)*/

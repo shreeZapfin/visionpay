@@ -15,13 +15,17 @@ class KycController extends Controller
     {
         $this->validate($request, [
             'kyc_document_image' => 'required|image',
-            'kyc_document_type' => 'required|in:DRIVING_LICENSE,VOTERID,PASSPORT'
+            'kyc_document_type' => 'required|in:DRIVING_LICENSE,VOTERID,PASSPORT',
+            'kyc_document_id' => 'required',
+            'kyc_document_expiry_date' => 'required|date_format:Y-m-d'
         ]);
 
         //dd($request->all());
         $user->kyc_document_url = (new FileHelper())->storeFileOnS3($request->file('kyc_document_image'), 'kyc_documents');
 
         $user->kyc_document_type = $request->kyc_document_type;
+        $user->kyc_document_id = $request->kyc_document_id;
+        $user->kyc_document_expiry_date = $request->kyc_document_expiry_date;
 
         $user->save();
         return ResponseFormatter::success();
